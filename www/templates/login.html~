@@ -1,0 +1,33 @@
+<ion-view view-title="Login" align-title="left">
+    <ion-content style="background: url(img/bg_blue.png) center; background-size: cover;">
+        <div class="hero no-header flat">
+            <div class="content">
+                <div class="app-icon dark"></div>
+                <h2 style="font-family:Copperplate; color:black">Pro Nirvahana</h2>
+            </div>
+        </div>
+        <div class="list">
+			<label class="item item-input">
+            	<ion-md-input placeholder="Username" highlight-color="energized" type="text"></ion-md-input>
+				<!-- <span class="input-label">Username</span>
+          		<input type="text" ng-model="loginData.username"> -->
+			</label>
+			<label class="item item-input">
+            	<ion-md-input placeholder="Password" type="password"></ion-md-input>
+				<!-- <span class="input-label">Password</span>
+          		<input type="password" ng-model="loginData.password">  -->
+			</label>
+        </div>
+        <div class="button-bar">
+            <button ui-sref="app.profile" class="button button-full button-positive ink">Login</button>
+            <button ui-sref="app.profile" class="button button-full button-assertive ink">SignUp</button>
+        </div>
+      <!-- Social Network Login
+		<div class="button-bar social-login">
+            <button class="button button-small button-border icon-left ion-social-google button-assertive-900">Google+</button>
+            <button class="button button-small button-border icon-left ion-social-twitter button-calm-900">Twitter</button>
+            <button class="button button-small button-border icon-left ion-social-facebook button-positive-900">Facebook</button>
+        </div>
+	   -->
+    </ion-content>
+</ion-view>

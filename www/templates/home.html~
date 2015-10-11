@@ -1,0 +1,39 @@
+<ion-view view-title="Home">
+	<ion-pane>
+		<ion-content scroll="false">
+			<div class="button-bar">
+			<!--	<div class = "row">
+					<div class = "col text-center"> 
+    	        		<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
+	    	        </div>
+					<div class = "col text-center">
+    		        	<button class = "button button-outline button-positive ion-cash">Funds</button>
+    		        </div>
+				</div>
+			-->
+				<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
+				<button class = "button button-outline button-positive ion-cash">Funds</button>
+			</div>
+			<div class="button-bar">
+				<div class = "row">
+					<div class = "col text-center">
+    		        	<button class = "button button-outline button-positive ion-ios-people">Personnel</button>
+    		        </div>
+					<div class = "col text-center">
+    		        	<button class = "button button-outline button-positive ion-ios-location">Location</button>
+    		        </div>
+				</div>
+			</div>
+			<div class="button-bar">
+				<div class = "row">
+					<div class = "col text-center">
+    		        	<button class = "button button-outline button-positive ion-ios-paper">Inventory</button>
+    		        </div>
+					<div class = "col text-center">
+    		        	<button class = "button button-outline button-positive ion-ios-analytics">Analysis</button>
+    		        </div>
+				</div>
+			</div>
+    	</ion-content>
+	</ion-pane>
+</ion-view>
