@@ -45,29 +45,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 controller: 'HomeCtrl'
             },
             'fabContent': {
-                template: '<button id="fab-home" class="button button-fab button-fab-top-right expanded button-energized-900 flap"><i class="icon ion-paper-airplane"></i></button>',
+                template: '<button id="fab-home" class="button button-fab button-fab-top-right expanded button-energized-900 flap"></i></button>',
                 controller: function ($timeout) {
                    /* $timeout(function () {
                         document.getElementById('fab-home').classList.toggle('on');
                     }, 200); */
-                }
-            }
-        }
-    })
-
-    .state('app.projects', {
-        url: '/projects',
-        views: {
-            'menuContent': {
-                templateUrl: 'templates/projects.html',
-                controller: 'ProjectsCtrl'
-            },
-            'fabContent': {
-                template: '<button id="fab-projects" class="button button-fab button-fab-top-left expanded button-energized-900 spin"><i class="icon ion-chatbubbles"></i></button>',
-                controller: function ($timeout) {
-                    $timeout(function () {
-                        document.getElementById('fab-projects').classList.toggle('on');
-                    }, 900);
                 }
             }
         }
@@ -95,6 +77,115 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
             },
             'fabContent': {
                 template: '<button id="fab-profile" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-plus"></i></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function () {
+                        document.getElementById('fab-profile').classList.toggle('on');
+                    }, 800);*/
+                }
+            }
+        }
+    })
+
+	.state('app.notifications', {
+        url: '/notifications',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/notifications.html',
+                controller: 'NotificationsCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-notifications" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-plus"></i></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function () {
+                        document.getElementById('fab-profile').classList.toggle('on');
+                    }, 800);*/
+                }
+            }
+        }
+    })
+
+    .state('app.projects', {
+        url: '/projects',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/projects.html',
+                controller: 'ProjectsCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-projects" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-plus"></i></button>',
+                controller: function ($timeout) {
+                   /* $timeout(function () {
+                        document.getElementById('fab-projects').classList.toggle('on');
+                    }, 900); */
+                }
+            }
+        }
+    })
+
+    .state('app.funds', {
+        url: '/funds',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/funds.html',
+                controller: 'FundsCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-funds" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function () {
+                        document.getElementById('fab-profile').classList.toggle('on');
+                    }, 800);*/
+                }
+            }
+        }
+    })
+
+	.state('app.personnel', {
+        url: '/personnel',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/personnel.html',
+                controller: 'PersonnelCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-personnel" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function()
+					{
+						$ionicNavBarDelegate.align('center');
+					});*/
+                }
+            }
+        }
+    })
+
+	.state('app.location', {
+        url: '/location',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/location.html',
+                controller: 'LocationCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-location" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function () {
+                        document.getElementById('fab-profile').classList.toggle('on');
+                    }, 800);*/
+                }
+            }
+        }
+    })
+
+	.state('app.inventory', {
+        url: '/inventory',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/inventory.html',
+                controller: 'InventoryCtrl'
+            },
+            'fabContent': {
+                template: '<button id="fab-inventory" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
                 controller: function ($timeout) {
                     /*$timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
