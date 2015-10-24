@@ -2,16 +2,19 @@
 	<ion-pane>
 		<ion-content scroll="false">
 			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
+				<!--<button ui-sref="app.projects" class = "button button-outline button-positive ion-ios-folder">Projects</button>
 				<button class = "button button-outline button-positive ion-cash">Funds</button>
+				-->
+				<a ui-sref="app.projects" class="button button-outline button-positive ion-ios-folder"> Projects </a>
+				<a ui-sref="app.funds" class="button button-outline button-positive ion-cash"> Funds </a>
 			</div>
 			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-people">Personnel</button>
-				<button class = "button button-outline button-positive ion-ios-location">Location</button>
+				<a ui-sref="app.personnel" class="button button-outline button-positive ion-ios-people"> Personnel </a>
+				<a ui-sref="app.location" class="button button-outline button-positive ion-ios-location"> Location </a>
 			</div>
 			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-paper">Inventory</button>
-				<button class = "button button-outline button-positive ion-ios-analytics">Analysis</button>
+				<a ui-sref="app.inventory" class="button button-outline button-positive ion-ios-paper"> Inventory </a>
+				<a ui-sref="app.analytics" class="button button-outline button-positive ion-ios-analytics"> Analytics </a>
 			</div>
     	</ion-content>
 	</ion-pane>
