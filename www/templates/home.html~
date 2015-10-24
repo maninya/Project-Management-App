@@ -1,39 +1,338 @@
 <ion-view view-title="Home">
 	<ion-pane>
 		<ion-content scroll="false">
-			<div class="button-bar">
-			<!--	<div class = "row">
-					<div class = "col text-center"> 
-    	        		<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
-	    	        </div>
-					<div class = "col text-center">
-    		        	<button class = "button button-outline button-positive ion-cash">Funds</button>
-    		        </div>
-				</div>
-			-->
-				<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
-				<button class = "button button-outline button-positive ion-cash">Funds</button>
-			</div>
-			<div class="button-bar">
-				<div class = "row">
-					<div class = "col text-center">
-    		        	<button class = "button button-outline button-positive ion-ios-people">Personnel</button>
-    		        </div>
-					<div class = "col text-center">
-    		        	<button class = "button button-outline button-positive ion-ios-location">Location</button>
-    		        </div>
-				</div>
-			</div>
-			<div class="button-bar">
-				<div class = "row">
-					<div class = "col text-center">
-    		        	<button class = "button button-outline button-positive ion-ios-paper">Inventory</button>
-    		        </div>
-					<div class = "col text-center">
-    		        	<button class = "button button-outline button-positive ion-ios-analytics">Analysis</button>
-    		        </div>
-				</div>
-			</div>
-    	</ion-content>
-	</ion-pane>
-</ion-view>
+<script src='js/modernizr.js'></script>
+<style>
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body,
+ul {
+  background: #212121;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  font-weight: lighter;
+  letter-spacing: 3px;
+}
+
+/* @group mixins */
+/* @end */
+/* @group diamonds */
+
+.diamonds {
+  height: 269.8px;
+  overflow: hidden;
+  font-size: 0;
+  margin: 40px auto;
+  min-width: 530px;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
+}
+@media only screen and (max-width: 537px) {
+
+.diamonds {
+  margin-left: -265px;
+  left: 50%;
+  position: relative;
+}
+}
+@media only screen and (min-width: 1348px) {
+
+.csstransforms .diamonds { max-width: 1324px; }
+
+.csstransforms .diamonds > li:nth-child(9n+6) { margin-left: 128px; }
+
+.csstransforms .diamonds > li:nth-child(9n+5) { margin-right: 0; }
+
+.csstransforms .diamonds > li:nth-child(n+5) { margin-top: -55px; }
+}
+@media only screen and (max-width: 1347px) and (min-width: 1078px) {
+
+.csstransforms .diamonds { max-width: 1060px; }
+
+.csstransforms .diamonds > li:nth-child(7n+5) { margin-left: 128px; }
+
+.csstransforms .diamonds > li:nth-child(7n+4) { margin-right: 0; }
+
+.csstransforms .diamonds > li:nth-child(n+4) { margin-top: -55px; }
+}
+@media only screen and (max-width: 1077px) and (min-width: 808px) {
+
+.csstransforms .diamonds { max-width: 794px; }
+
+.csstransforms .diamonds > li:nth-child(5n+4) { margin-left: 128px; }
+
+.csstransforms .diamonds > li:nth-child(5n+3) { margin-right: 0; }
+
+.csstransforms .diamonds > li:nth-child(n+3) { margin-top: -55px; }
+}
+@media only screen and (max-width: 807px) {
+
+.csstransforms .diamonds { max-width: 530px; }
+
+.csstransforms .diamonds > li:nth-child(3n+3) { margin-left: 128px; }
+
+.csstransforms .diamonds > li:nth-child(3n+2) { margin-right: 0; }
+
+.csstransforms .diamonds > li:nth-child(n+2) { margin-top: -55px; }
+}
+
+.csstransforms .diamonds { padding: 39px 0 39px 42px; }
+
+.no-csstransforms .diamonds { max-width: 1060px; }
+
+.diamonds > li {
+  display: inline-block;
+  font-size: 12px;
+  position: relative;
+  top: -135.66px;
+  margin-right: 80px;
+  margin-left: -5px;
+}
+
+.no-csstransforms .diamonds > li { margin: 0 20px 20px 0; }
+
+.diamonds .diamond {
+  -moz-perspective: 1000;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  background: white;
+  border: 1px solid white;
+  color: white;
+  display: block;
+  height: 190px;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  width: 190px;
+}
+
+.csstransforms .diamonds .diamond {
+  overflow: hidden;
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.diamonds .content {
+  display: table-cell;
+  height: 190px;
+  padding: 0 10px;
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  text-align: center;
+  vertical-align: middle;
+  width: 190px;
+}
+
+/* @end */
+/* @group triangles */
+
+.triangle {
+  -moz-transition: background-color 100ms linear;
+  -o-transition: background-color 100ms linear;
+  -webkit-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+  display: table;
+  height: 144.4px;
+  width: 269.8px;
+  text-align: center;
+  background: #333333;
+  position: relative;
+  left: -70.3px;
+}
+
+.triangle:hover { background: #444444; }
+
+.triangle.top p { padding-top: 43.7px; }
+
+.triangle.bottom { margin-top: 2px; }
+
+.triangle.bottom p { padding-bottom: 43.7px; }
+
+.triangle p {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/* @end */
+</style>
+<link href="http://www.cssscript.com/wp-includes/css/sticky.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div id="css-script-menu">
+  <div class="css-script-center">
+    <ul>
+      <li><a href="http://www.cssscript.com/pure-css-responsive-triangle-diamond-grid-layout/">Download</a></li>
+      <li><a href="http://www.cssscript.com/">Back To CSS Script</a></li>
+    </ul>
+    <div class="css-script-ads"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-2783044520727903";
+/* CSSScript Demo Page */
+google_ad_slot = "3025259193";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script> 
+      <script type="text/javascript"
+src="//pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+    <div class="css-script-clear"></div>
+  </div>
+</div>
+<h1 style="margin-top:150px" align="center">Triangle/Diamond Grid Layout Demo</h1>
+<ul class="diamonds">
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+  <li> <a href="#" class="diamond">
+    <div class="content">
+      <div class="top triangle">
+        <p>CSS</p>
+      </div>
+      <div class="bottom triangle">
+        <p>script</p>
+      </div>
+    </div>
+    </a> </li>
+</ul>
+</body>
+</html>

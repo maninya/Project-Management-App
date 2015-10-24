@@ -23,12 +23,6 @@
                 <ion-item nav-clear menu-close button ui-sref="app.profile">
                     Profile
                 </ion-item>
-                <!-- <ion-item nav-clear menu-close ui-sref="app.friends">
-                    Projects
-                </ion-item> -->
-                <!--<ion-item nav-clear menu-close ui-sref="app.gallery">
-                    Gallery
-                </ion-item> -->
                 <ion-item nav-clear menu-close ui-sref="app.login">
                     Login
                 </ion-item>

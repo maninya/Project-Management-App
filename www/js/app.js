@@ -47,9 +47,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
             'fabContent': {
                 template: '<button id="fab-home" class="button button-fab button-fab-top-right expanded button-energized-900 flap"><i class="icon ion-paper-airplane"></i></button>',
                 controller: function ($timeout) {
-                    $timeout(function () {
+                   /* $timeout(function () {
                         document.getElementById('fab-home').classList.toggle('on');
-                    }, 200);
+                    }, 200); */
                 }
             }
         }
@@ -65,9 +65,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
             'fabContent': {
                 template: '<button id="fab-projects" class="button button-fab button-fab-top-left expanded button-energized-900 spin"><i class="icon ion-chatbubbles"></i></button>',
                 controller: function ($timeout) {
-                    $timeout(function () {
+                   /* $timeout(function () {
                         document.getElementById('fab-projects').classList.toggle('on');
-                    }, 900);
+                    }, 900); */
                 }
             }
         }

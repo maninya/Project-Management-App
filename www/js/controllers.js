@@ -99,12 +99,12 @@ angular.module('starter.controllers', [])
     // Set Header
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
-    $scope.$parent.setHeaderFab('left');
+    $scope.$parent.setHeaderFab(false);
 
     // Delay expansion
     $timeout(function() {
-        $scope.isExpanded = true;
-        $scope.$parent.setExpanded(true);
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
     }, 300);
 
     // Set Motion
@@ -143,8 +143,8 @@ angular.module('starter.controllers', [])
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
     $scope.isExpanded = true;
-    $scope.$parent.setExpanded(true);
-    $scope.$parent.setHeaderFab('right');
+    $scope.$parent.setExpanded(false);
+    $scope.$parent.setHeaderFab(false);
 
     $timeout(function() {
         ionicMaterialMotion.fadeSlideIn({
