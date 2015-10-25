@@ -1,8 +1,36 @@
 <ion-view view-title="Home">
 	<ion-pane>
-		<ion-content scroll="false">
+		<ion-content id="fhm_page" scroll="false">
+			<div class="fhm_container">
+				<div class="fhm_row">
+					<div class="fhm_item">
+						<a ui-sref="app.projects"> <i class="icon ion-ios-folder"></i> Projects </a>
+					</div>
+					<div class="fhm_item">
+						<a ui-sref="app.funds"> <i class="icon ion-cash"></i> Funds </a>
+					</div>
+				</div>
+				<div class="fhm_row">
+					<div class="fhm_item">
+						<a ui-sref="app.personnel"> <i class="icon ion-ios-people"></i> Personnel </a>
+					</div>
+					<div class="fhm_item">
+						<a ui-sref="app.location"> <i class="icon ion-ios-location"></i> Location </a>
+					</div>
+				</div>
+				<div class="fhm_row">
+					<div class="fhm_item">
+						<a ui-sref="app.inventory"> <i class="icon ion-ios-paper"></i> Inventory </a>
+					</div>
+					<div class="fhm_item">
+						<a ui-sref="app.funds"> <i class="icon ion-cash"></i> Funds </a>
+					</div>
+				</div>
+			</div>
+		</ion-content>
+<!--		<ion-content scroll="false">
 			<div class="button-bar">
-				<a ui-sref="app.projects" class="button button-outline button-large button-positive">
+				<a ui-sref="app.projects" class="button button-outline button-large button-positive background-image:url('img/logo.png') 10px 10px no-repeat">
 				<i class="icon ion-ios-folder"></i> Projects </a>
 				<a ui-sref="app.funds" class="button button-outline button-large button-positive">
 				<i class="icon ion-cash"></i> Funds </a>
@@ -20,5 +48,6 @@
 				<i class="icon ion-ios-analytics"></i> Analytics </a>
 			</div>
     	</ion-content>
+-->
 	</ion-pane>
 </ion-view>

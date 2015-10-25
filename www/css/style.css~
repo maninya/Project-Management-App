@@ -5,7 +5,25 @@ h1 {
     text-shadow: 0 1px 0px #000;
     font-size: 42px;
 }
+/*
+h2 {
+  font: 40px 'Great Vibes', Helvetica, sans-serif;
+  color: #2b2b2b;
+  text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
+}
 
+h2 {
+  font: 40px 'Leckerli One', Helvetica, sans-serif;
+  color: #000;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
+}
+*/
+
+h2 {
+  font: 40px 'Berkshire Swash', Helvetica, sans-serif;
+  color: #fff;
+  text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
+}
 
 /* Utilities
 ==================================*/
@@ -60,11 +78,37 @@ p {
     content: "\f2ca";
 }
 
+/* Home page - grid
+==================================*/
+#fhm_page .scroll,
+.fhm_container {
+  position:absolute;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+}
+
+.fhm_row {
+  /* position: absolute; */
+  height: 33.3%;
+  left:0;
+  right:0;
+  background-color:#000;
+  clear:both;
+}
+.fhm_item {
+  height: 100%;
+  width:49.95%;
+  background-color: #fff;
+  border: 1px solid #000;
+  float:left;
+}
 
 /* Login
 ==================================*/
 .app-icon {
-    background-color: #7c4;
+    background-color: #009688;
     background: url('../img/logo.png') center;
     background-size: cover;
     border-radius: 10%;
