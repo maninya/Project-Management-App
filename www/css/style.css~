@@ -64,7 +64,7 @@ p {
 /* Login
 ==================================*/
 .app-icon {
-    background-color: #009688;
+    background-color: #7c4;
     background: url('../img/logo.png') center;
     background-size: cover;
     border-radius: 10%;

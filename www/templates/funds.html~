@@ -1,4 +1,4 @@
-<!--<ion-view view-title="Funds">
+<ion-view view-title="Funds">
     <ion-content ng-class="{expanded:isExpanded}">
         <div class="content has-header">
             <div class="list animate-fade-slide-in-right">
@@ -6,25 +6,5 @@
         </div>
     </ion-content>
 </ion-view>
--->
 
-<ion-view view-title="Funds">
-	<ion-pane>
-		<ion-content scroll="false">
-			<div class="list">
-				<a class="item" href="#">
-					Funds1
-				</a>
-				<a class="item" href="#">
-					Funds2
-				</a>
-				<a class="item" href="#">
-					Funds3
-				</a>
-				<a class="item" href="#">
-					Funds4
-				</a>
-            </div>
-    	</ion-content>
-	</ion-pane>
-</ion-view>
+

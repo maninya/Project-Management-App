@@ -2,19 +2,22 @@
 	<ion-pane>
 		<ion-content scroll="false">
 			<div class="button-bar">
-				<!--<button ui-sref="app.projects" class = "button button-outline button-positive ion-ios-folder">Projects</button>
-				<button class = "button button-outline button-positive ion-cash">Funds</button>
-				-->
-				<a ui-sref="app.projects" class="button button-outline button-positive ion-ios-folder"> Projects </a>
-				<a ui-sref="app.funds" class="button button-outline button-positive ion-cash"> Funds </a>
+				<a ui-sref="app.projects" class="button button-outline button-large button-positive">
+				<i class="icon ion-ios-folder"></i> Projects </a>
+				<a ui-sref="app.funds" class="button button-outline button-large button-positive">
+				<i class="icon ion-cash"></i> Funds </a>
 			</div>
 			<div class="button-bar">
-				<a ui-sref="app.personnel" class="button button-outline button-positive ion-ios-people"> Personnel </a>
-				<a ui-sref="app.location" class="button button-outline button-positive ion-ios-location"> Location </a>
+				<a ui-sref="app.personnel" class="button button-outline button-large button-positive">
+				<i class="icon ion-ios-people"></i> Personnel </a>
+				<a ui-sref="app.location" class="button button-outline button-large button-positive">
+				<i class="icon ion-ios-location"></i> Location </a>
 			</div>
 			<div class="button-bar">
-				<a ui-sref="app.inventory" class="button button-outline button-positive ion-ios-paper"> Inventory </a>
-				<a ui-sref="app.analytics" class="button button-outline button-positive ion-ios-analytics"> Analytics </a>
+				<a ui-sref="app.inventory" class="button button-outline button-large button-positive"> 
+				<i class="icon ion-ios-paper"></i> Inventory </a>
+				<a ui-sref="app.analytics" class="button button-outline button-large button-positive"> 
+				<i class="icon ion-ios-analytics"></i> Analytics </a>
 			</div>
     	</ion-content>
 	</ion-pane>

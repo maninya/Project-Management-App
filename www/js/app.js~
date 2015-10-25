@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'ionMdInput'])
+angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'ionMdInput', 'firebase'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -93,14 +93,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 templateUrl: 'templates/notifications.html',
                 controller: 'NotificationsCtrl'
             },
-            'fabContent': {
+            /*'fabContent': {
                 template: '<button id="fab-notifications" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-plus"></i></button>',
                 controller: function ($timeout) {
-                    /*$timeout(function () {
+                    $timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
-                    }, 800);*/
+                    }, 800);
                 }
-            }
+            }*/
         }
     })
 
@@ -129,14 +129,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 templateUrl: 'templates/funds.html',
                 controller: 'FundsCtrl'
             },
-            'fabContent': {
+          /*  'fabContent': {
                 template: '<button id="fab-funds" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
                 controller: function ($timeout) {
-                    /*$timeout(function () {
+                    $timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
-                    }, 800);*/
+                    }, 800);
                 }
-            }
+            }*/
         }
     })
 
@@ -147,15 +147,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 templateUrl: 'templates/personnel.html',
                 controller: 'PersonnelCtrl'
             },
-            'fabContent': {
+            /*'fabContent': {
                 template: '<button id="fab-personnel" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
                 controller: function ($timeout) {
-                    /*$timeout(function()
+                    $timeout(function()
 					{
 						$ionicNavBarDelegate.align('center');
-					});*/
+					});
                 }
-            }
+            }*/
         }
     })
 
@@ -166,14 +166,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 templateUrl: 'templates/location.html',
                 controller: 'LocationCtrl'
             },
-            'fabContent': {
+            /*'fabContent': {
                 template: '<button id="fab-location" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
                 controller: function ($timeout) {
                     /*$timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
-                    }, 800);*/
+                    }, 800);
                 }
-            }
+            }*/
         }
     })
 
@@ -184,14 +184,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 templateUrl: 'templates/inventory.html',
                 controller: 'InventoryCtrl'
             },
-            'fabContent': {
+           /* 'fabContent': {
                 template: '<button id="fab-inventory" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-arrow-graph-up-right"></i></button>',
                 controller: function ($timeout) {
                     /*$timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
-                    }, 800);*/
+                    }, 800);
                 }
-            }
+            }*/
         }
     })
     ;

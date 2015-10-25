@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
             this.classList.toggle('active');
         });
     }
-
+	
     ////////////////////////////////////////
     // Layout Methods
     ////////////////////////////////////////
@@ -85,6 +85,10 @@ angular.module('starter.controllers', [])
             fabs[0].remove();
         }
     };
+
+	$scope.toggleSideMenu = function() {
+ 	   $scope.sideMenuController.toggleLeft();
+  	};
 })
 
 .controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk) {
@@ -115,10 +119,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ProjectsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
-    // Set Header
+	// Set Header
     $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.$parent.setHeaderFab(false);
+    //$scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(true);
 
     // Delay expansion
     $timeout(function() {
@@ -131,6 +135,24 @@ angular.module('starter.controllers', [])
 
     // Set Ink
     ionicMaterialInk.displayEffect();
+
+	$scope.users = [];
+
+	// Control for Projects
+	var ref = new Firebase("https://pronirvahanadb.firebaseio.com/users");
+	ref.on("value", function(snapshot) {
+	  	// The callback function will get called depending on the number of entries
+	  	snapshot.forEach(function(childSnapshot) {
+	    // key will be <user1> the first time and <user2> the second time and so on
+	    var key = childSnapshot.key();
+	    // childData will be the actual contents of the child
+	    var childData = childSnapshot.val();
+    	childData['$id'] = key;
+    	$scope.users.push(childData);
+		
+		console.log("SELECTED -> " + childData.userName + " " + childData.userMail + " " +childData.userOrgCode);
+	  });
+	});
 })
 
 .controller('FundsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
