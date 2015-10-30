@@ -99,10 +99,13 @@ p {
 }
 .fhm_item {
   height: 100%;
-  width:49.95%;
+  width:50%;
   background-color: #fff;
-  border: 1px solid #000;
+  border: 2px dashed #00695c;
   float:left;
+  line-height:200px;
+  font-size:20px;
+  color:#004d40;
 }
 
 /* Login
