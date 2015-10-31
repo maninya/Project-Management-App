@@ -15,6 +15,12 @@
  		 		</ion-item>
 			</ion-list>
 
+			<div class="tabs tabs-balanced tabs-icon-top" >
+	            <a class="tab-item">
+	                <i class="icon ion-plus"></i> Add Project
+	            </a>
+           	</div>
+
 	  	</ion-content>
 	</ion-pane>
 </ion-view>
