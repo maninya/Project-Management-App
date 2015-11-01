@@ -1,3 +1,18 @@
 <ion-view view-title="Location">
-
+	<ion-pane>
+		<ion-content scroll="false">
+			<ion-list>
+				<ion-item ng-repeat="location in locations">
+    				{{location.districtName}}
+					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(location)"> </ion-option-button>
+    				<ion-option-button class="button button-assertive icon ion-ios-trash" ng-click="removeLocation(location)"> </ion-option-button>
+ 		 		</ion-item>
+			</ion-list>
+			<div class="tabs tabs-balanced-900 tabs-icon-top" >
+	            <a class="tab-item active">
+	                <a ui-sref="app.locgraphs"> <i class="icon ion-arrow-graph-up-right"></i> Graphs </a>
+	            </a>
+           	</div>
+    	</ion-content>
+	</ion-pane>
 </ion-view>

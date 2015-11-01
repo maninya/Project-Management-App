@@ -5,6 +5,52 @@ h1 {
     text-shadow: 0 1px 0px #000;
     font-size: 42px;
 }
+/*
+h2 {
+  font: 40px 'Great Vibes', Helvetica, sans-serif;
+  color: #2b2b2b;
+  text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
+}
+*/
+
+h2 {
+  font: 42px 'Berkshire Swash', Helvetica, sans-serif;
+  color: #ff5722;
+  text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
+}
+
+h3 {
+  font: 35px 'Leckerli One', Helvetica, sans-serif;
+  color: #000;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
+}
+
+h4 {
+  font: 15px Helvetica, sans-serif;
+  color: #000;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
+}
+
+.spinner svg {
+  width: 56px;
+  height: 56px;
+  stroke: #ff8a65;
+  fill: #444;
+}
+
+.card {
+    background:#212121;
+    border:1px dotted #424242;
+    margin:10px;
+    overflow:hidden;
+}
+
+.card1 {
+    background:#fff;
+    border:1px dotted #424242;
+    margin:10px;
+    overflow:hidden;
+}
 
 
 /* Utilities
@@ -60,14 +106,43 @@ p {
     content: "\f2ca";
 }
 
+/* Home page - grid
+==================================*/
+#fhm_page .scroll,
+.fhm_container {
+  position:absolute;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+}
+
+.fhm_row {
+  /* position: absolute; */
+  height: 33.3%;
+  left:0;
+  right:0;
+  background-color:#000;
+  clear:both;
+}
+.fhm_item {
+  height: 100%;
+  width:50%;
+  background-color: #fff;
+  border: 2px dashed #00695c;
+  float:left;
+  line-height:200px;
+  font-size:20px;
+  color:#004d40;
+}
 
 /* Login
 ==================================*/
 .app-icon {
-    background-color: #fff;
-    background: url('../img/crown.jpg') center;
+    background-color: #009688;
+    background: url('../img/logo.png') center;
     background-size: cover;
-    border-radius: 50%;
+    border-radius: 10%;
     height: 125px;
     margin: 0 auto;
     width: 125px;
@@ -77,3 +152,5 @@ p {
     position: fixed;
     bottom: 0;
 }
+
+

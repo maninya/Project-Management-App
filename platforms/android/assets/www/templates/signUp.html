@@ -1,0 +1,34 @@
+<ion-view view-title="User Sign Up">
+    <ion-content ng-controller="SignUpCtrl" scroll="false">
+		<div class="hero no-header flat">
+		    <div class="content">
+				<h3 style="color:#1b5e20; text-decoration: underline">User Registration</h3>
+				<br>
+				<h4 style="color:#000; font-style: italic;"> All the fields are necessary for registering the user </h4>
+				<h5 style="color:red; font-style:bolder">{{userData.ErrorMessage}}</h5>
+		    </div>
+		</div>
+		<div class="list card1">
+			<label class="item item-input" style="color:black">
+				<input type="text" placeholder="Name" ng-model="userData.userName" ng-click="resetSignFields()">
+			</label>
+		
+			<label class="item item-input" style="color:black">
+				<input type="text" placeholder="E-Mail" ng-model="userData.userMail" ng-click="resetSignFields()">
+			</label>
+
+			<label class="item item-input" style="color:black">
+				<input type="password" placeholder="Password" ng-model="userData.userPassword" ng-click="resetSignFields()">
+			</label>
+
+			<label class="item item-input" style="color:black">
+				<input type="password" placeholder="Organisation Code" ng-model="userData.userOrgCode" ng-click="resetSignFields()">
+			</label>
+
+			<div class="button-bar">
+				<button ng-click="registerUser()" style="color:#0d47a1;" class="button button-small button-cool"> Save </button>
+				<button ng-click="cancelUserRegister()" style="color:#f44336" class="button button-small activated"> Cancel </button>
+			</div>
+		</div>
+    </ion-content>
+</ion-view>

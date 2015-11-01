@@ -1,8 +1,19 @@
 <ion-view view-title="Projects">
-    <ion-content ng-class="{expanded:isExpanded}">
-        <div class="content has-header">
-            <div class="list animate-fade-slide-in-right">
-            </div>
-        </div>
-    </ion-content>
+	<ion-pane>
+		<ion-content scroll="false">
+			<ion-list ng-controller="ProjectsCtrl"
+					  can-swipe="listCanSwipe">
+				<ion-item ng-repeat="project in projects">
+    				{{project.projectName}}
+ 		 		</ion-item>
+			</ion-list>
+
+			<div class="tabs tabs-balanced tabs-icon-top" >
+	            <a ui-sref="app.addProject" class="tab-item">
+	                <i class="icon ion-plus-circled"></i> Add Project
+	            </a>
+           	</div>
+
+	  	</ion-content>
+	</ion-pane>
 </ion-view>

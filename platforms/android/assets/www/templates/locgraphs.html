@@ -1,0 +1,41 @@
+<ion-view view-title="Graphs">
+    <ion-content ng-controller="LocGraphsCtrl">
+<!--        <div class="item item-divider">
+                Projects vs Location Count
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-options="{showTooltips: false}"></canvas>
+        </div>
+        <div class="item item-divider">
+                Projects vs Instance Count
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-options="{showTooltips: false}"></canvas>
+        </div>
+-->
+		<div class="item item-divider">
+                A line chart
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="line" class="chart chart-line" chart-data="graph.data" chart-labels="graph.labels" chart-legend="true" chart-series="graph.series" chart-options="{showTooltips: false}"></canvas>
+        </div>
+        <div class="item item-divider">
+                A bar chart
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="bar" class="chart chart-bar" chart-data="graph.data" chart-labels="graph.labels" chart-legend="true" chart-series="graph.series" chart-options="{showTooltips: false}"></canvas>
+        </div>
+        <div class="item item-divider">
+            A pie chart
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="pie" class="chart chart-pie" chart-data="pie_graph.data" chart-labels="graph.labels" chart-legend="true" ></canvas>
+        </div>
+        <div class="item item-divider">
+            A doughnut chart
+        </div>
+        <div class="item item-text-wrap">
+            <canvas id="doughnut" class="chart chart-doughnut" chart-data="pie_graph.data" chart-labels="graph.labels" chart-legend="true" ></canvas>
+        </div>
+    </ion-content>
+</ion-view>

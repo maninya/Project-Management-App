@@ -1,32 +1,40 @@
-<ion-view view-title="Login" align-title="left">
-    <ion-content style="background: url(img/bg2.jpg) center; background-size: cover;" ng-controller="LoginCtrl" scroll="false">
-        <div class="hero no-header flat">
-            <div class="content">
-                <div class="app-icon dark"></div>
-                <h2 style="color:white">Pro Nirvahana</h2>
-				<br>
-				<h5 style="color:red; font-style:bolder">{{loginData.ErrorMessage}}</h5>
-            </div>
-        </div>
-        <div class="list list-inset">
-			<label class="item item-input" style="background-color:#E0E0E0;">
-				<input type="text" placeholder="User Mail" ng-model="loginData.mail" ng-click="resetLoginFields()">
-			</label>
-		</div>
-		<div class="list list-inset">
-			<label class="item item-input" style="background-color:#EEEEEE;">
-				<input type="password" placeholder="Password" ng-model="loginData.password" ng-click="resetLoginFields()">
-			</label>
-		</div>
-        <div class="button-bar">
-            <a class="button button-full button-positive ink" ng-click="loginUser()">Login</a>
-            <a class="button button-full button-balanced ink" ng-click="forgotPassword()">Forgot Password</a>
-        </div>
-		<div class="button-bar">
-			<button ui-sref="app.signUp" class="button button-full button-assertive ink">SignUp</button>
-		</div>
-		<div class="button-bar">
-			<button ui-sref="app.register" class="button button-full button-energized ink">Register Organisation</button>
-		</div>
-    </ion-content>
+<ion-view view-title="Login">
+	<ion-pane>
+		<ion-content style="background: url(img/bg2.jpg) center; background-size: cover;" scroll="false">
+		    <div class="hero no-header flat">
+		        <div class="content">
+					<div style="width: 300px; height: 200px;" class="spacer"></div>
+		            <div class="app-icon dark"></div>
+		            <h2 >Pro Nirvahana</h2>
+		        </div>
+		    </div>
+			<div style="width: 300px; height: 50px;" class="spacer"></div>
+		    <div class="list card">
+		        <label class="item item-input">
+		            <input type="text" placeholder="Email" ng-model="loginData.mail" ng-click="resetLoginFields()"
+						   style="height: 30px; 
+								  font-size:18px; 
+								  vertical-align:9px;
+								  color:#ff8a65" >
+		        </label>
+		        <label class="item item-input">
+		            <input type="password" placeholder="Password" ng-model="loginData.password" ng-click="resetLoginFields()"
+						   style="height: 30px; 
+								  font-size:18px; 
+								  vertical-align:9px;
+								  color:#ff8a65" >
+		        </label>
+				<div style="width: 300px; height: 20px;" class="spacer"></div>
+				<div class="list" style="text-align:center">
+					<button ng-click="forgotPassword()" style="color:#ff8a65; text-decoration: underline" class="button button-clear">Forgot Password ? </button>
+					<button ng-click="loginUser()" style="color:#ff8a65" class="button button-small activated"> Login </button>
+		    	</div>
+		    </div>
+			
+		    <div class="list">
+				<button ui-sref="app.signUp" style="color:#ff8a65; text-decoration: underline" class="button button-clear ">Don't have an account ? </button>
+				<button ui-sref="app.register" style="color:#ff8a65; text-decoration: underline" class="button button-clear ">Organization is not registered ? </button>
+			</div>
+		</ion-content>
+	</ion-pane>
 </ion-view>

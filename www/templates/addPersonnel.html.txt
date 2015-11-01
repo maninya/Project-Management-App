@@ -1,0 +1,28 @@
+<ion-view view-title="AddProject">	
+	<ion-pane>
+		<ion-content ng-controller="AddPersonnelCtrl" scroll="false">
+		 <div>                        
+            <br>				            
+        </div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Name</span>
+					<input type="text" placeholder="">
+				</label>
+			</div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Telephone</span>
+					<input type="tel">
+				</label>
+			</div>        
+			<div>
+				<label class="item item-input">
+				<span class="input-label">Email</span>
+				<input type="email">
+				</label>
+			</div>			
+
+		</ion-content>	
+	</ion-pane>
+</ion-view>

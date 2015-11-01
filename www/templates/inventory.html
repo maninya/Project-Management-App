@@ -1,12 +1,18 @@
 <ion-view view-title="Inventory">
 	<ion-pane>
 		<ion-content scroll="false">
-			
-			<div class="tabs tabs-balanced tabs-icon-top" >
-	            <a class="tab-item">
-	                <i class="icon ion-edit"></i> Edit
+			<ion-list>
+				<ion-item ng-repeat="item in items">
+    				{{item.itemName}}
+					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(item)"> </ion-option-button>
+    				<ion-option-button class="button button-assertive icon ion-ios-trash" ng-click="removeItem(item)"> </ion-option-button>
+ 		 		</ion-item>
+			</ion-list>
+			<div class="tabs tabs-balanced-900 tabs-icon-top" >	           
+				<a ui-sref="app.addInventory" class="tab-item">
+	                <i class="icon ion-plus-circled"></i> Add
 	            </a>
-	            <a class="tab-item active">
+	            <a  class="tab-item active">
 	                <i class="icon ion-arrow-graph-up-right"></i> Graphs
 	            </a>
            	</div>

@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="list list-inset">
-			<label class="item item-input" style="background-color:#212121;">
+			<label class="item item-input" style="background-color:#E0E0E0;">
 				<input type="text" placeholder="User Mail" ng-model="loginData.mail" ng-click="resetLoginFields()">
 			</label>
 		</div>

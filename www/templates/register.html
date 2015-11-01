@@ -1,0 +1,26 @@
+<ion-view view-title="Register Organisation" align-title="left">
+    <ion-content ng-controller="RegisterCtrl" scroll="false">
+		<div class="hero no-header flat">
+		    <div class="content">
+				<h3 style="color:#1b5e20; text-decoration: underline">Organisation Registration</h3>
+				<br>
+				<h4 style="color:#000; font-style:italic;">All the fields are necessary for registering the organisation</h4>
+				<h5 style="color:red; font-style:bolder">{{orgData.ErrorMessage}}</h5>
+		    </div>
+		</div>
+		<div class="list card1">
+			<label class="item item-input" style="color:black">
+				<input type="text" placeholder="Organisation Name" ng-model="orgData.orgName" ng-click="resetRegOrgFields()">
+			</label>
+		
+			<label class="item item-input" style="color:black">
+				<input type="text" placeholder="E-Mail" ng-model="orgData.orgMail" ng-click="resetRegOrgFields()">
+			</label>
+
+			<div class="button-bar">
+				<button ng-click="registerOrganisation()" style="color:#0d47a1;" class="button button-small button-cool"> Save </button>
+				<button ng-click="cancelRegistration()" style="color:#f44336" class="button button-small activated"> Cancel </button>
+			</div>
+		</div>
+    </ion-content>
+</ion-view>

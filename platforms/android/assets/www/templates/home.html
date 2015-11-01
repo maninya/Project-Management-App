@@ -1,18 +1,20 @@
 <ion-view view-title="Home">
 	<ion-pane>
-		<ion-content scroll="false">
-			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-folder">Projects</button>
-				<button class = "button button-outline button-positive ion-cash">Funds</button>
+		<ion-content id="fhm_page" scroll="false">
+			<div class="fhm_container" style="text-align: center;">
+				<div class="fhm_row">
+					<div class="fhm_item item-image" ui-sref="app.projects"> <img src="img/projects.PNG"> </div>
+					<div class="fhm_item item-image" ui-sref="app.funds"> <img src="img/finance.png"> </div> 
+				</div>
+				<div class="fhm_row" style="text-align:center;" >
+					<div class="fhm_item item-image" ui-sref="app.personnel"> <img src="img/personnel.PNG"> </div>
+					<div class="fhm_item item-image" ui-sref="app.location"> <img src="img/location.PNG"> </div>
+				</div>
+				<div class="fhm_row" style="text-align: center;">
+					<div class="fhm_item item-image" ui-sref="app.inventory"> <img src="img/inventory.PNG"> </div>
+					<div class="fhm_item item-image" ui-sref="app.analytics"> <img src="img/analytics.PNG"> </div>
+				</div>
 			</div>
-			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-people">Personnel</button>
-				<button class = "button button-outline button-positive ion-ios-location">Location</button>
-			</div>
-			<div class="button-bar">
-				<button class = "button button-outline button-positive ion-ios-paper">Inventory</button>
-				<button class = "button button-outline button-positive ion-ios-analytics">Analysis</button>
-			</div>
-    	</ion-content>
+		</ion-content>
 	</ion-pane>
 </ion-view>

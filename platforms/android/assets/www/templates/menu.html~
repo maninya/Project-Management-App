@@ -1,10 +1,10 @@
 <ion-side-menus enable-menu-with-back-views="true">
     <ion-side-menu-content>
-        <ion-nav-bar class="bar-assertive-900" ng-class="{expanded: isExpanded, 'has-header-fab-left': hasHeaderFabLeft, 'has-header-fab-right': hasHeaderFabRight}" align-title="left">
-            <ion-nav-back-button class="no-text">
+        <ion-nav-bar class="bar-energized" align-title="center">
+			<ion-nav-back-button class="no-text">
             </ion-nav-back-button>
             <ion-nav-buttons side="right">
-                <button class="button button-icon button-clear ion-android-more-vertical" menu-toggle="right">
+                <button class="button button-icon button-clear ion-grid" menu-toggle="right">
                 </button>
             </ion-nav-buttons>
         </ion-nav-bar>
@@ -12,25 +12,29 @@
         <ion-nav-view name="menuContent" ng-class="{expanded: isExpanded}" ></ion-nav-view>
     </ion-side-menu-content>
     <ion-side-menu side="right">
-        <ion-header-bar align-title="left" class="bar-dark">
-            <h4 style="font-family:arial; color:white">Pro Nirvahana</h4>
+        <ion-header-bar class="expanded">
+            <img src="img/logo.PNG" class="avatar motion spin fade">
+            <div class="menu-bottom" align-title="center">
+            	<h2 style="font-size:25px"> Pro Nirvahana </h2>
+            </div>
         </ion-header-bar>
-        <ion-content class="stable-bg">
+        <ion-content class="stable-bg has-expanded-header">
             <ion-list>
                 <ion-item ion-home nav-clear menu-close ui-sref="app.home">
-                    Home
+					<i class="icon ion-home" ></i>
+                    	Home
                 </ion-item>
                 <ion-item nav-clear menu-close button ui-sref="app.profile">
-                    Profile
+					<i class="icon ion-person" ></i>
+	                    Profile
                 </ion-item>
-                <!-- <ion-item nav-clear menu-close ui-sref="app.friends">
-                    Projects
-                </ion-item> -->
-                <!--<ion-item nav-clear menu-close ui-sref="app.gallery">
-                    Gallery
-                </ion-item> -->
+				<ion-item nav-clear menu-close ui-sref="app.notifications">
+					<i class="icon ion-android-notifications" ></i>
+	                    Notifications
+                </ion-item>
                 <ion-item nav-clear menu-close ui-sref="app.login">
-                    Login
+					<i class="icon ion-log-out"></i>
+	                    Logout
                 </ion-item>
             </ion-list>
         </ion-content>

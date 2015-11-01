@@ -1,0 +1,54 @@
+<ion-view view-title="AddProject">	
+	<ion-pane>
+		<ion-content ng-controller="AddProjectCtrl" scroll="false">
+		 <div>                        
+            <br>				            
+        </div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Projectname</span>
+					<input type="text" ng-model="project.pname" placeholder="">
+				</label>
+			</div>
+		<div ng-controller="managerSelectCtrl">
+				<label class="item item-input">
+					<span class="input-label">ProjectManager</span>
+						<select ng-model="project.manager" ng-change="getManager(project.manager)">
+						<option value=''>Select</option>
+						<option ng-repeat="person in managerList" value="{{ person }} ">{{person.employeeName}}</option>
+						</select>         
+				</label>				
+			</div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Projectmanager</span>
+					<input type="text" ng-model="project.manager" placeholder="">
+				</label>
+			</div>        
+			<div>
+				<label class="item item-input">
+                <span class="input-label">Project Description</span><textarea ng-model="project.description" placeholder=""></textarea>
+            </label>            
+			</div>			
+			<div>
+				<label class="item item-input">
+				<span class="input-label">Start Date</span>
+				<input type="date" ng-model="project.startdate" placeholder="startdate">
+				</label>
+			</div>
+			<div>
+				<label class="item item-input">
+				<span class="input-label">End Date</span>
+				<input type="date" ng-model="project.enddate" placeholder="enddate">
+				</label>
+			</div>
+			
+			
+			<div class="tabs tabs-balanced tabs-icon-top" >
+	            <a ui-sref="app.addLocation" class="tab-item" ng-click="addProjectDetails()">
+	                <i class="icon ion-plus-circled"></i> Add Location
+	            </a>
+           	</div> 
+		</ion-content>	
+	</ion-pane>
+</ion-view>

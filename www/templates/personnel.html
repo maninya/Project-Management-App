@@ -1,25 +1,21 @@
 <ion-view view-title="Personnel">
 	<ion-pane>
 		<ion-content scroll="false">
-			<div class="list">
-				<a class="item" href="#">
-					Person1
-				</a>
-				<a class="item" href="#">
-					Person2
-				</a>
-				<a class="item" href="#">
-					Person3
-				</a>
-				<a class="item" href="#">
-					Person4
-				</a>
-            </div>
-			<div class="tabs tabs-balanced tabs-icon-top" >
-	            <a class="tab-item">
+			<ion-list>
+				<ion-item ng-repeat="person in people">
+    				{{person.employeeName}}
+					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(person)"> </ion-option-button>
+    				<ion-option-button class="button button-assertive icon ion-ios-trash" ng-click="removePerson(person)"> </ion-option-button>
+ 		 		</ion-item>
+			</ion-list>	
+			<div class="tabs tabs-balanced-900 tabs-icon-top" >
+	           <!-- <a class="tab-item">
 	                <i class="icon ion-edit"></i> Edit
+	            </a> -->
+				<a ui-sref="app.addPersonnel" class="tab-item">
+	                <i class="icon ion-plus-circled"></i> Add
 	            </a>
-	            <a class="tab-item active">
+	            <a  class="tab-item active">
 	                <i class="icon ion-arrow-graph-up-right"></i> Graphs
 	            </a>
            	</div>

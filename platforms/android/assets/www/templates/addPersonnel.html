@@ -1,0 +1,42 @@
+<ion-view view-title="AddPersonnel">	
+	<ion-pane>
+		<ion-content ng-controller="AddPersonnelCtrl" scroll="false">
+		 <div>                        
+            <br>				            
+        </div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Name</span>
+					<input type="text" placeholder="" ng-model="personnel.name" required>
+				</label>
+			</div>
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Telephone</span>
+					<input type="tel" ng-model="personnel.number" required>
+				</label>
+			</div>        
+			<div>
+				<label class="item item-input">
+				<span class="input-label">Email</span>
+				<input type="email" ng-model="personnel.role" required>
+				</label>
+			</div>			
+			<div>
+				<label class="item item-input">
+				<span class="input-label">Role</span>
+				<input type="email" ng-model="personnel.email" required>
+				</label>
+			</div>
+			 <div class="item item-input item-select">
+				<div class="input-label">
+				Gender
+				</div>
+				<select ng-model="personnel.gender" required>
+					<option>Male</option>
+					<option selected>Female</option>					
+				</select>
+			</div>
+		</ion-content>	
+	</ion-pane>
+</ion-view>

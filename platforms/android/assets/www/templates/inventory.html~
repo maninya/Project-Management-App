@@ -1,0 +1,31 @@
+<ion-view view-title="AddInventory">	
+	<ion-pane>
+		<ion-content ng-controller="AddInventoryCtrl" scroll="false">
+		    <div>
+				<label class="item item-input">
+					<span class="input-label">Inventory</span>
+					<input type="text" ng-model="inventory.iteamname" required>
+							
+				</label>
+			</div>		
+			 <div class="form-errors" ng-messages="inventory.name.$error">
+				<div ng-message="required">This field is required</div>
+				<div ng-message="pattern">Must be a valid 10 digit phone number</div>
+			</div>   
+			  
+			<div>
+				<label class="item item-input">
+					<span class="input-label">Quantity</span>
+					<input type="number" ng-model="inventory.quantity" required>
+				</label>
+			</div>     	
+			<div>
+				<button class="button button-block button-positive" ng-click="addInventory()">
+					Add Inventory
+				</button>
+			</div>
+			<div class="form-errors" ng-messages="inventory.quantity.$error">
+			<div ng-message="required">This field is required</div> 
+		</ion-content>	
+	</ion-pane>
+</ion-view>

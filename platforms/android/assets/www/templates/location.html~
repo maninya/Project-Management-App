@@ -1,0 +1,19 @@
+<ion-view view-title="Location">
+	<ion-pane>
+		<ion-content scroll="false">
+			<ion-list>
+				<ion-item ng-repeat="location in locations">
+    				{{location.districtName}}
+ 		 		</ion-item>
+			</ion-list>
+			<div class="tabs tabs-balanced tabs-icon-top" >
+	            <a class="tab-item">
+	                <i class="icon ion-edit"></i> Edit
+	            </a>
+	            <a class="tab-item active">
+	                <i class="icon ion-arrow-graph-up-right"></i> Graphs
+	            </a>
+           	</div>
+    	</ion-content>
+	</ion-pane>
+</ion-view>

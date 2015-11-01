@@ -16,7 +16,7 @@ angular.module('starter.controllers', [])
             this.classList.toggle('active');
         });
     }
-
+	
     ////////////////////////////////////////
     // Layout Methods
     ////////////////////////////////////////
@@ -85,32 +85,642 @@ angular.module('starter.controllers', [])
             fabs[0].remove();
         }
     };
+
+	$scope.toggleSideMenu = function() {
+ 	   $scope.sideMenuController.toggleLeft();
+  	};
 })
 
-.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk) {
+.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk, $location, LoginService, UserDataService, dbURL)
+{
+   $scope.$parent.clearFabs();
+   $timeout(function() {
+        $scope.$parent.hideHeader();
+    }, 0);
+	
+	$scope.ref = new Firebase(dbURL);
+	$scope.loginData = { mail : "",
+						 password : "",
+						 ErrorMessage : ""
+					   };
+/*
+	var auth = $scope.ref.getAuth();
+	if(auth)
+	{
+	console.log("uid: " + auth.uid);
+	$scope.ref.unauth();
+	}
+	*/		
+	$scope.loginUser = function()
+	{
+		if (!$scope.loginData.mail) {
+			console.log("email is missing");
+			alert("Email can't be empty.");
+		} else if (!$scope.loginData.password) {
+			console.log("password is missing");
+			alert("Password can't be empty.");
+		} else {
+		    $scope.$on('loginFail', function()
+			{
+				$scope.loginData.ErrorMessage = "Wrong Credentials";
+				$scope.$apply();
+				console.log("error message in controller: " + $scope.loginData.ErrorMessage);
+			})
+			$scope.$on('loginSuccess', function()
+			{
+				$scope.$on('userDataDone', function()
+				{
+						$timeout(function(){$location.path("/app/home");},0);
+				})
+				UserDataService.setUserData();
+			})
+			
+			LoginService.login($scope.loginData);		
+		}
+	}
+	
+	$scope.resetLoginFields = function()
+	{
+		if(!angular.equals($scope.loginData.ErrorMessage, ""))
+		{
+			$scope.loginData.mail = "";
+			$scope.loginData.password = "";
+			$scope.loginData.ErrorMessage = "";
+		}
+	}
+	
+	$scope.forgotPassword = function()
+	{
+		if($scope.loginData.mail)
+		{
+			console.log("Received the email id.");
+			$scope.ref.resetPassword(
+			{
+				email: $scope.loginData.mail
+			}, 
+			function(error)
+			{
+				if (error)
+				{
+					switch (error.code)
+					{
+						case "INVALID_USER":
+							console.log("The specified user account does not exist.");
+							alert("The specified user account does not exist. Do provide a valid email");
+							break;
+						default:
+						console.log("Error resetting password:", error);
+						alert("The password could not be reset. Please try again later.");
+					}
+				}
+				else
+				{
+					//console.log("Password reset email sent successfully!");
+					alert("Password reset email sent successfully!");
+				}
+			});
+		} else {
+			console.log("Email id of the user is not specified.");
+			alert("Email can't be empty. Please provide a valid email");
+		}
+	}
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('RegisterCtrl', function($scope, $firebaseObject, $location, $timeout, ionicMaterialInk, dbURL)
+{
     $scope.$parent.clearFabs();
     $timeout(function() {
         $scope.$parent.hideHeader();
     }, 0);
-    ionicMaterialInk.displayEffect();
+	
+	$scope.orgData = {
+						orgName 	: "",
+						orgMail 	: "",
+						code		: "",
+						dbRef 		: "",
+						ErrorMessage: ""
+					 };
+	
+	//console.log("Waiting for Organisation details to register.");
+
+	$scope.resetRegOrgFields = function()
+	{
+		if(!angular.equals($scope.orgData.ErrorMessage, ""))
+		{
+			$scope.orgData.orgName = "";
+			$scope.orgData.orgMail = "";
+			$scope.orgData.ErrorMessage = "";
+		}
+	}
+	
+	var addOrganisationData = function()
+	{
+	  //  console.log("It is a new Organisation. Hence, attempting to save the organisation details.");
+				
+		$scope.dbRef.set({orgName : $scope.orgData.orgName, orgMail : $scope.orgData.orgMail},
+		function(error)
+		{
+		    if(error)
+			{
+			    alert("Unable to register the organisation. Do try again after a while.");
+		        console.log("Adding organisation details failed.");
+			}
+			else
+			{
+				var orgFoundString = "The organisation has been successfully registered.\n";
+		        orgFoundString += "The code generated for the organisation is : " + $scope.orgData.code;
+		        orgFoundString += "\nUse this code while Signing Up for an account.";
+		        alert(orgFoundString);
+			    console.log("The organisation " + $scope.orgData.orgName + " has been added.");
+			}
+			$scope.$emit('orgDataDone');
+		});
+	}
+	
+	$scope.registerOrganisation = function()
+	{
+		if ($scope.orgData.orgName && $scope.orgData.orgMail)
+		{
+		    console.log("Received the organisation details.");
+			
+		    $scope.orgData.code =  CryptoJS.SHA1($scope.orgData.orgName).toString().substring(0,6);
+			
+			var url = dbURL + 'organisations/' + $scope.orgData.code;
+			$scope.dbRef = new Firebase(url);
+			$scope.dbRef.once("value", function(snapshot) 
+			{
+				if(snapshot.exists())
+				{
+					console.log("The organisation " + snapshot.val().orgName + " is already registered.");
+					var orgFoundString = "The organisation is already registered.\n";
+					orgFoundString += "The code generated for the organisation is : " + $scope.orgData.code;
+					orgFoundString += "\nUse this code while Signing Up for an account.";
+					$scope.orgData.ErrorMessage =  orgFoundString;
+					$scope.$apply();
+				}
+				else
+				{
+					$scope.$on('orgDataDone', function()
+					{
+						$timeout(function(){$location.path("/login");},0);
+					})
+					addOrganisationData();
+				}
+			});
+		}
+		else
+		{
+			$scope.orgData.ErrorMessage = "Missing Fields";
+		}
+	}
+	
+	$scope.cancelRegistration = function()
+	{
+	    console.log("Organisation Registration action is cancelled by the user");
+	    $scope.orgName = "";
+		$scope.orgMail = "";
+	    $location.path("/login");
+	}
+	
+	ionicMaterialInk.displayEffect();
 })
 
-.controller('ProjectsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+.controller('SignUpCtrl', function($scope, $firebaseObject, $location, $timeout, ionicMaterialInk, LoginService, UserDataService, dbURL)
+{
+    $scope.$parent.clearFabs();
+    $timeout(function() {
+        $scope.$parent.hideHeader();
+    }, 0);
+	
+	$scope.userData = {	userName 	: "",
+						userMail 	: "",
+						userOrgCode : "",
+						userPassword: "",
+						ErrorMessage: ""
+						};
+						
+	console.log("Waiting for User details to register.");
+
+    $scope.resetSignFields = function()
+	{
+		$scope.userData.ErrorMessage = "";
+	}
+	
+	var addUserData = function(authId)
+	{
+		var userDbRef = new Firebase(dbURL);
+		var userPath = userDbRef.child("users/" + authId);
+		userPath.set({userName: $scope.userData.userName, userMail: $scope.userData.userMail, userOrgCode: $scope.userData.userOrgCode},
+		function(error)
+		{
+			if(error)
+			{
+				userDbRef.removeUser({
+										email: $scope.userData.userMail,
+										password: $scope.userData.userPassword
+									});
+				$scope.userData.ErrorMessage = "Registration unsuccessful. Do try after sometime.";
+				$scope.userData.userName = "";
+				$scope.userData.userMail = "";
+				$scope.userData.userOrgCode = "";
+				$scope.userData.userPassword = "";
+				$scope.$apply();
+				console.log("Error adding user data");
+			}
+			else
+			{
+				console.log("User details added");
+				var cred = {mail : $scope.userData.userMail, password : $scope.userData.userPassword};
+				
+				$scope.$on('loginFail', function()
+				{
+					$scope.userData.ErrorMessage = "Wrong Credentials";
+					$scope.$apply();
+					console.log("error message in controller: " + $scope.loginData.ErrorMessage);
+				})
+				$scope.$on('loginSuccess', function()
+				{
+					$scope.$on('userDataDone', function()
+					{
+						$timeout(function(){$location.path("/app/home");},0);
+					})
+					UserDataService.setUserData();
+				})
+			
+				LoginService.login(cred);
+			}
+		});
+	}
+	
+	$scope.registerUser = function()
+	{
+	    if ($scope.userData.userName && $scope.userData.userMail && $scope.userData.userPassword && $scope.userData.userOrgCode)
+		{
+			console.log("Received the user details. Verifying if the organisation code is valid.");
+			var userDbRef = new Firebase(dbURL);
+	        userDbRef.once("value", function(snapshot) 
+			{
+				if(snapshot.hasChild("organisations/" + $scope.userData.userOrgCode))
+				{
+					console.log("The organisation is registered. Attempting to register the user.");
+					userDbRef.createUser
+					(
+						{
+							email    : $scope.userData.userMail,
+							password : $scope.userData.userPassword
+						},
+						function(error, userRec) 
+						{
+							if (error) 
+							{
+								switch (error.code)
+								{
+									case "EMAIL_TAKEN":
+										console.log("The new user account cannot be created because the email is already in use." + $scope.userMail);
+										$scope.userData.ErrorMessage = "The new user account cannot be created because the email is already in use.";
+										$scope.userData.userMail = "";
+										$scope.$apply();
+										break;
+									case "INVALID_EMAIL":
+										console.log("The specified email is not valid : " + $scope.userMail);
+										$scope.userData.ErrorMessage = "The specified email is not valid.";
+										$scope.userData.userMail = "";
+										$scope.$apply();
+										break;
+									default:
+										console.log("Error creating user:", error);
+										$scope.userData.ErrorMessage = "Registration unsuccessful. Do try after sometime.";
+										$scope.userData.userMail = "";
+										$scope.$apply();
+								}
+							} 
+							else 
+							{
+								addUserData(userRec.uid);
+							}
+						}
+					);
+				}
+				else
+				{
+				    console.log("Invalid Organisation Code: " + $scope.userData.userOrgCode);
+					$scope.userData.ErrorMessage = "Invalid Organisation Code. Do register your organisation before signing up.";
+					$scope.userData.userOrgCode = "";
+					$scope.$apply();
+				}
+			});
+		}
+		else
+		{
+			$scope.userData.ErrorMessage = "Missing Fields";
+		}
+	}
+	
+	$scope.cancelUserRegister = function()
+	{
+		console.log("User Registration action is cancelled by the user");
+	    $scope.userData.userName = "";
+		$scope.userData.userMail = "";
+		$scope.userData.userOrgCode = "";
+		$scope.userData.userPassword = "";
+		$location.path("/login");
+	}
+	
+	ionicMaterialInk.displayEffect();
+})
+
+
+.controller('NotificationsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
     // Set Header
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
-    $scope.$parent.setHeaderFab('left');
+    $scope.$parent.setHeaderFab(false);
 
     // Delay expansion
     $timeout(function() {
-        $scope.isExpanded = true;
-        $scope.$parent.setExpanded(true);
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
     }, 300);
 
     // Set Motion
     ionicMaterialMotion.fadeSlideInRight();
 
     // Set Ink
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('ProjectsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, dbURL, ProjectService) {
+	// Set Header
+    $scope.$parent.showHeader();
+    //$scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(true);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+	ProjectService.getProjectList().then(function(prList)
+	{
+		//console.log(prList);
+		$scope.projects = prList;
+	});
+	
+	$scope.removeProject = function (proj) {
+		console.log("proj data :" + proj.id);
+		ProjectService.remProj(proj.id).then(function()
+		{
+			$scope.remProj = proj;
+		//	$location.path("/app/projects");
+		});
+	}
+})
+
+.controller('PersonnelCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, dbURL, PeopleService) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+
+	$scope.removePerson = function (pers) {
+		console.log("pers data :" + pers.id);
+		PeopleService.remPers(pers.id).then(function()
+		{
+			$scope.remPers = pers;
+		//	$location.path("/app/personnel");
+		});
+	}
+
+   	PeopleService.getPeopleList().then(function(prList)
+	{
+		//console.log(prList);
+		$scope.people = prList;
+		//console.log('Personnelctrl	');
+		//console.log(($scope.people)[0].employeeName);
+	});
+})
+
+.controller('AddProjectCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,ProjectService) {
+    // Set Header
+    $scope.$parent.showHeader();
+    //$scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+		
+	$scope.addProjectDetails = function(){		
+		
+		
+    	var projName = $scope.project.pname;
+		var projId = CryptoJS.SHA1(projName).toString().substring(0,6);			
+		var projDuration = ($scope.project.enddate - $scope.project.startdate);
+		console.log($scope.project.manager);
+		var projmanager =  (($scope.project.manager).id);
+		var projectData = {id : projId, name : projName, desc : $scope.project.description, mngr : projmanager, start : $scope.project.startdate, end : $scope.project.enddate, time : projDuration};	
+		ProjectService.addProject(projectData);
+	};
+})
+
+.controller('LocationCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,  dbURL, LocationService) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+
+	LocationService.getLocationList().then(function(prList){
+			
+		$scope.locations = prList;
+	});
+
+	$scope.removeLocation = function (loct) {
+		console.log("loct data :" + loct.id);
+		LocationService.remLoct(loct.id).then(function()
+		{
+			$scope.remLoct = loct;
+	//		$location.path("/app/location");
+		});
+	}
+})
+
+
+.controller('FundsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('InventoryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, dbURL, ItemService) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+
+    ItemService.getItemList().then(function(prList){
+			$scope.items = prList;
+		});
+
+	$scope.removeItem = function (item) {
+		console.log("item data :" + item.id);
+		ItemService.remItem(item.id).then(function()
+		{
+			$scope.remItem = item;
+			//$location.path("/app/inventory");
+		});
+	}
+})
+
+.controller('AddInventoryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+    ionicMaterialMotion.fadeSlideInRight();
+    ionicMaterialInk.displayEffect();
+	
+	$scope.addInventory = function()
+	{		
+		var inventorylist=[];
+		
+		//console.log("inventory details");
+		//console.log($scope.inventory.itemname);
+		//console.log($scope.inventory.quantity);
+		
+	}
+	
+})
+.controller('AddPersonnelCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {   
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);   
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);   
+    ionicMaterialMotion.fadeSlideInRight();    
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('InventoryDisplayCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, ItemService) {
+    ItemService.getItemList().then(function(itList)
+	{
+		$scope.resoureList = itList;
+		
+	});
+
+	
+	//var inventory = ItemService.getItemList();	
+	//$scope.resoureList = ItemService.getItemList();	
+	//console.log(inventory[item.name]);
+    
+})
+.controller('AnalyticsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,PeopleService) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab(false);
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = false;
+        $scope.$parent.setExpanded(false);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+	
+})
+
+.controller('HomeCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk, UserDataService, dbURL, ProjectService, LocationService, InstanceService, PeopleService, ItemService, $q) {
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(false);
+    $scope.$parent.setHeaderFab(false);
+
+  /*  $timeout(function() {
+        ionicMaterialMotion.fadeSlideIn({
+            selector: '.animate-fade-slide-in .item'
+        });
+    },0);*/
+	
+	$scope.userName = UserDataService.getUserName();
+	
+	
+	//Activate ink for controller
     ionicMaterialInk.displayEffect();
 })
 
@@ -138,22 +748,242 @@ angular.module('starter.controllers', [])
     // Set Ink
     ionicMaterialInk.displayEffect();
 })
+.controller('AddLocationCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk, PeopleService,LocationService) {  
+	//console.log('entered the controller for add location');
+	$scope.instance = {
+    state: '',
+    substate: ''    
+  }; 
+ 
+    $scope.states = {
+					'Andaman and Nicobar Island': ['Nicobar','North and Middle Andaman','South Andaman'],
+					'Andhra Pradesh': ['Anantapur','Chittoor','Cuddapah','East Godavari','Guntur','Krishna','Kurnool','Nellore','Prakasam','Srikakulam','Visakhapatnam','Vizianagaram','West Godavari'],
+					'Arunachal Pradesh':['Anjaw','Changlang','Dibang Valley','East Kameng','East Siang','Kurung Kumey','Lohit','Longding','Lower Dibang Valley','Lower Subansiri','Papum Pare','Tawang',					  'Tirap','Upper Siang','Upper Subansiri','West Kameng','West Siang'],
+					'Assam': ['Baksa','Barpeta','Bongaigaon','Cachar','Chirang','Darrang','Dhemaji','Dhubri','Dibrugarh','Dima Hasao','Goalpara','Golaghat','Hailakandi','Jorhat','Kamrup Metropolitan','Kamrup','Karbi 	 Anglong','Karimganj','Kokrajhar','Lakhimpur','Morigaon','Nagaon','Nalbari','Sivasagar','Sonitpur','Tinsukia','Udalguri'],
+					'Bihar': ['Araria','Arwal','Aurangabad','Banka','Begusarai','Bhagalpur','Bhojpur','Buxar','Darbhanga','East Champaran (Motihari)','Gaya','Gopalganj','Jamui','Jehanabad','Kaimur (Bhabua)','Katihar','Khagaria','Kishanganj','Lakhisarai','Madhepura','Madhubani','Munger (Monghyr)','Muzaffarpur','Nalanda','Nawada','Patna','Purnia (Purnea)','Rohtas','Saharsa','Samastipur',
+					'Saran','Sheikhpura','Sheohar','Sitamarhi','Siwan','Supaul','Vaishali','West Champaran'],
+					'Chandigarh': ['Chandigarh'],
+					'Chhattisgarh': ['Balod', 'Baloda Bazar', 'Balrampur', 'Bastar', 'Bemetara', 'Bijapur', 'Bilaspur', 'Dantewada (South Bastar)', 'Dhamtari', 'Durg', 'Gariaband', 'Janjgir-Champa', 'Jashpur', 'Kabirdham (Kawardha)', 'Kanker (North Bastar)', 'Kondagaon', 'Korba', 'Korea (Koriya)', 'Mahasamund', 'Mungeli', 'Narayanpur', 'Raigarh', 'Raipur', 'Rajnandgaon', 'Sukma', 'Surajpur', 'Surguja'],
+					'Dadra and Nagar Haveli': ['Dadra & Nagar Haveli'],
+					'Daman and Diu': ['Daman','Diu'],
+					'Delhi': ['Central Delhi', 'East Delhi', 'New Delhi', 'North Delhi', 'North East Delhi', 'North West Delhi', 'South Delhi', 'South West Delhi', 'West Delhi'],
+					'Goa': ['North Goa','South Goa'],
+					'Gujarat': ['Ahmedabad', 'Amreli', 'Anand', 'Aravalli', 'Banaskantha (Palanpur)', 'Bharuch', 'Bhavnagar', 'Botad', 'Chhota Udepur', 'Dahod', 'Dangs (Ahwa)', 'Devbhoomi Dwarka', 'Gandhinagar', 'Gir Somnath', 'Jamnagar', 'Junagadh', 'Kachchh', 'Kheda (Nadiad)', 'Mahisagar', 'Mehsana', 'Morbi', 'Narmada (Rajpipla)', 'Navsari', 'Panchmahal (Godhra)', 'Patan', 'Porbandar', 'Rajkot', 'Sabarkantha (Himmatnagar)', 'Surat', 'Surendranagar', 'Tapi (Vyara)', 'Vadodara', 'Valsad'],
+					'Haryana': ['Ambala', 'Bhiwani', 'Faridabad', 'Fatehabad', 'Gurgaon', 'Hisar', 'Jhajjar', 'Jind', 'Kaithal', 'Karnal', 'Kurukshetra', 'Mahendragarh', 'Mewat', 'Palwal', 'Panchkula', 'Panipat', 'Rewari', 'Rohtak', 'Sirsa', 'Sonipat', 'Yamunanagar'],
+					'Himachal Pradesh': ['Bilaspur', 'Chamba', 'Hamirpur', 'Kangra', 'Kinnaur', 'Kullu', 'Lahaul & Spiti', 'Mandi', 'Shimla', 'Sirmaur (Sirmour)', 'Solan', 'Una'],
+					'Jammu and Kashmir': ['Anantnag', 'Bandipora', 'Baramulla', 'Budgam', 'Doda', 'Ganderbal', 'Jammu', 'Kargil', 'Kathua', 'Kishtwar', 'Kulgam', 'Kupwara', 'Leh', 'Poonch', 'Pulwama', 'Rajouri', 'Ramban', 'Reasi', 'Samba', 'Shopian', 'Srinagar', 'Udhampur'],
+					'Jharkhand': ['Bokaro', 'Chatra', 'Deoghar', 'Dhanbad', 'Dumka', 'East Singhbhum', 'Garhwa', 'Giridih', 'Godda', 'Gumla', 'Hazaribag', 'Jamtara', 'Khunti', 'Koderma', 'Latehar', 'Lohardaga', 'Pakur', 'Palamu', 'Ramgarh', 'Ranchi', 'Sahibganj', 'Seraikela-Kharsawan', 'Simdega', 'West Singhbhum'],
+					'Karnataka': ['Bagalkot', 'Bangalore Rural', 'Bangalore Urban', 'Belgaum', 'Bellary', 'Bidar', 'Bijapur', 'Chamarajanagar', 'Chickmagalur', 'Chikballapur', 'Chitradurga', 'Dakshina Kannada', 'Davangere', 'Dharwad', 'Gadag', 'Gulbarga', 'Hassan', 'Haveri', 'Kodagu', 'Kolar', 'Koppal', 'Mandya', 'Mysore', 'Raichur', 'Ramnagara', 'Shimoga', 'Tumkur', 'Udupi', 'Uttara Kannada (Karwar)', 'Yadgir'],
+					'Kerala': ['Alappuzha', 'Ernakulam', 'Idukki', 'Kannur', 'Kasaragod', 'Kollam', 'Kottayam', 'Kozhikode', 'Malappuram', 'Palakkad', 'Pathanamthitta', 'Thiruvananthapuram', 'Thrissur', 'Wayanad'],
+					'Lakshadweep': ['Lakshadweep'],
+					'Madhya Pradesh': ['Alirajpur', 'Anuppur', 'Ashoknagar', 'Balaghat', 'Barwani', 'Betul', 'Bhind', 'Bhopal', 'Burhanpur', 'Chhatarpur', 'Chhindwara', 'Damoh', 'Datia', 'Dewas', 'Dhar', 'Dindori', 'Guna', 'Gwalior', 'Harda', 'Hoshangabad', 'Indore', 'Jabalpur', 'Jhabua', 'Katni', 'Khandwa', 'Khargone', 'Mandla', 'Mandsaur', 'Morena', 'Narsinghpur', 'Neemuch', 'Panna', 'Raisen', 'Rajgarh', 'Ratlam', 'Rewa', 'Sagar', 'Satna', 'Sehore', 'Seoni', 'Shahdol', 'Shajapur', 'Sheopur', 'Shivpuri', 'Sidhi', 'Singrauli', 'Tikamgarh', 'Ujjain', 'Umaria', 'Vidisha'],
+					'Maharashtra': ['Ahmednagar', 'Akola', 'Amravati', 'Aurangabad', 'Beed', 'Bhandara', 'Buldhana', 'Chandrapur', 'Dhule', 'Gadchiroli', 'Gondia', 'Hingoli', 'Jalgaon', 'Jalna', 'Kolhapur', 'Latur', 'Mumbai City', 'Mumbai Suburban', 'Nagpur', 'Nanded', 'Nandurbar', 'Nashik', 'Osmanabad', 'Parbhani', 'Pune', 'Raigad', 'Ratnagiri', 'Sangli', 'Satara', 'Sindhudurg', 'Solapur', 'Thane', 'Wardha', 'Washim', 'Yavatmal'],
+					'Manipur': ['Bishnupur', 'Chandel', 'Churachandpur', 'Imphal East', 'Imphal West', 'Senapati', 'Tamenglong', 'Thoubal', 'Ukhrul'],
+					'Meghalaya': ['East Garo Hills', 'East Jaintia Hills', 'East Khasi Hills', 'North Garo Hills', 'Ri Bhoi', 'South Garo Hills', 'South West Garo Hills', 'South West Khasi Hills', 'West Garo Hills', 'West Jaintia Hills', 'West Khasi Hills'],
+					'Mizoram': ['Aizawl', 'Champhai', 'Kolasib', 'Lawngtlai', 'Lunglei', 'Mamit', 'Saiha', 'Serchhip'],
+					'Nagaland': ['Dimapur', 'Kiphire', 'Kohima', 'Longleng', 'Mokokchung', 'Mon', 'Peren', 'Phek', 'Tuensang', 'Wokha', 'Zunheboto'],
+					'Odisha': ['Angul', 'Balangir', 'Balasore', 'Bargarh', 'Bhadrak', 'Boudh', 'Cuttack', 'Deogarh', 'Dhenkanal', 'Gajapati', 'Ganjam', 'Jagatsinghapur', 'Jajpur', 'Jharsuguda', 'Kalahandi', 'Kandhamal', 'Kendrapara', 'Kendujhar (Keonjhar)', 'Khordha', 'Koraput', 'Malkangiri', 'Mayurbhanj', 'Nabarangpur', 'Nayagarh', 'Nuapada', 'Puri', 'Rayagada', 'Sambalpur', 'Sonepur', 'Sundargarh', ],
+					'Puducherry': ['Karaikal','Mahe','Pondicherry','Yanam'],
+					'Punjab': ['Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib', 'Fazilka', 'Ferozepur', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar', 'Kapurthala', 'Ludhiana', 'Mansa', 'Moga', 'Muktsar', 'Nawanshahr', 'Pathankot', 'Patiala', 'Rupnagar', 'Sangrur', 'SAS Nagar (Mohali)', 'Tarn Taran'],
+					'Rajasthan': ['Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi', 'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore', 'Jhalawar', 'Jhunjhunu', 'Jodhpur', 'Karauli', 'Kota', 'Nagaur', 'Pali', 'Pratapgarh', 'Rajsamand', 'Sawai Madhopur', 'Sikar', 'Sirohi', 'Sri Ganganagar', 'Tonk', 'Udaipur'],
+					'Sikkim': ['East Sikkim','North Sikkim','South Sikkim','West Sikkim'],
+					'Tamil Nadu': ['Ariyalur', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kanchipuram', 'Kanyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Salem', 'Sivaganga', 'Thanjavur', 'Theni', 'Thoothukudi (Tuticorin)', 'Tiruchirappalli', 'Tirunelveli', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar'],
+					'Telangana': ['Adilabad', 'Hyderabad', 'Karimnagar', 'Khammam', 'Mahabubnagar', 'Medak', 'Nalgonda', 'Nizamabad', 'Rangareddy', 'Warangal'],
+					'Tripura': ['Dhalai','Gomati','Khowai','North Tripura','Sepahijala','South Tripura','Unakoti','West Tripura'],
+					'Uttar Pradesh': ['Agra', 'Aligarh', 'Allahabad', 'Ambedkar Nagar', 'Auraiya', 'Azamgarh', 'Baghpat', 'Bahraich', 'Ballia', 'Balrampur', 'Banda', 'Barabanki', 'Bareilly', 'Basti', 'Bhim Nagar', 'Bijnor', 'Budaun', 'Bulandshahr', 'Chandauli', 'Chatrapati Sahuji Mahraj Nagar', 'Chitrakoot', 'Deoria', 'Etah', 'Etawah', 'Faizabad', 'Farrukhabad', 'Fatehpur', 'Firozabad', 'Gautam Buddha Nagar', 'Ghaziabad', 'Ghazipur', 'Gonda', 'Gorakhpur', 'Hamirpur', 'Hardoi', 'Hathras', 'Jalaun', 'Jaunpur', 'Jhansi', 'Jyotiba Phule Nagar (J.P. Nagar)', 'Kannauj', 'Kanpur Dehat', 'Kanpur Nagar', 'Kanshiram Nagar (Kasganj)', 'Kaushambi', 'Kushinagar (Padrauna)', 'Lakhimpur - Kheri', 'Lalitpur', 'Lucknow', 'Maharajganj', 'Mahoba', 'Mainpuri', 'Mathura', 'Mau', 'Meerut', 'Mirzapur', 'Moradabad', 'Muzaffarnagar', 'Panchsheel Nagar', 'Pilibhit', 'Prabuddh Nagar', 'Pratapgarh', 'RaeBareli', 'Rampur', 'Saharanpur', 'Sant Kabir Nagar', 'Sant Ravidas Nagar', 'Shahjahanpur', 'Shravasti', 'Siddharth Nagar', 'Sitapur', 'Sonbhadra', 'Sultanpur', 'Unnao', 'Varanasi'],
+					'Uttarakhand': ['Almora', 'Bageshwar', 'Chamoli', 'Champawat', 'Dehradun', 'Haridwar', 'Nainital', 'Pauri Garhwal', 'Pithoragarh', 'Rudraprayag', 'Tehri Garhwal', 'Udham Singh Nagar', 'Uttarkashi'],
+					'West Bengal':['Bankura', 'Birbhum', 'Burdwan (Bardhaman)', 'Cooch Behar', 'Dakshin Dinajpur (South Dinajpur)', 'Darjeeling', 'Hooghly', 'Howrah', 'Jalpaiguri', 'Kolkata', 'Malda', 'Murshidabad', 'Nadia', 'North 24 Parganas', 'Paschim Medinipur (West Medinipur)', 'Purba Medinipur (East Medinipur)', 'Purulia', 'South 24 Parganas', 'Uttar Dinajpur (North Dinajpur)'],   
+  };
+  
+  $scope.stateNames = [];
+  //console.log($scope.states);
+  for(var state in $scope.states)
+    $scope.stateNames.push(state);
+  
+  $scope.substateNames = [];  
+  $scope.getsubstateNames = function(state) {
+    $scope.instance.substate = '';
+   var result = [];
+		if($scope.states.hasOwnProperty(state)) {
+		//console.log(state);
+		//console.log($scope.states[state]);
+			for(var substate of $scope.states[state]){
+				//console.log(substate);
+				result.push(substate);
+			}
+			//console.log(result);
+			$scope.substateNames = result;
+		}
+	}
+	
+	
+	$scope.addInstance = function(){
+		console.log($scope.instance.state);
+		console.log($scope.instance.substate);
+		console.log($scope.instance.name);
+		console.log($scope.instance.fund);
+		console.log($scope.instance.expenditure);
+		console.log($scope.instance.inventory);
+		console.log($scope.instance.invreq);
+	
+		var instanceId = CryptoJS.SHA1($scope.instance.name).toString().substring(0,6);	
+		var locationId = CryptoJS.SHA1($scope.instance.substate).toString().substring(0,6);
+		var locationObj = {district : $scope.instance.substate, state : $scope.instance.state, address : $scope.instance.name, instanceId : instanceId, locationId : locationId} ;
 
-.controller('HomeCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.isExpanded = true;
-    $scope.$parent.setExpanded(true);
-    $scope.$parent.setHeaderFab('right');
-
-    $timeout(function() {
-        ionicMaterialMotion.fadeSlideIn({
-            selector: '.animate-fade-slide-in .item'
-        });
-    }, 200);
-
-    // Activate ink for controller
-    ionicMaterialInk.displayEffect();
+		var projId = Authorization.projectId;
+	
+		LocationService.addLocation(locationObj);
+		
+		console.log("Added instance");
+	}
 })
 
+.controller('GraphsCtrl', function($scope) {
+
+
+	$scope.$parent.showHeader();
+	$scope.graph = {};
+	$scope.pie_graph = {};
+	$scope.locgraph = {};
+	// $scope.instgraph = {};
+	//$scope.graph.locs = ["Bangalore", "Chennai"];
+	// $scope.graph.projExp = ["30000", "5000"];
+	// $scope.graph.locfunds = [];
+	// //$scope.locs.
+	
+
+
+
+	$scope.graph.data = [
+
+		[16, 15, 20, 12, 16, 12, 8],
+		[8, 9, 4, 12, 8, 12, 14]
+	];
+
+	$scope.pie_graph.data = [16, 15, 20, 12, 16];
+
+	$scope.graph.labels = ['ProjectA', 'ProjectB', 'ProjectC', 'ProjectD', 'ProjectE'];
+	$scope.graph.series = ['Funds', 'Instances'];
+
+})
+
+.controller('LocGraphsCtrl', function($scope) {
+
+	$scope.$parent.showHeader();
+	$scope.graph = {};
+	$scope.pie_graph = {};
+	$scope.locgraph = {};
+	// $scope.instgraph = {};
+	//$scope.graph.locs = ["Bangalore", "Chennai"];
+	// $scope.graph.projExp = ["30000", "5000"];
+	// $scope.graph.locfunds = [];
+	// //$scope.locs.
+	
+
+
+
+	$scope.graph.data = [
+
+		[16, 15, 20, 12, 16, 12, 8],
+		[8, 9, 4, 12, 8, 12, 14]
+	];
+
+	$scope.pie_graph.data = [16, 15, 20, 12, 16];
+
+	$scope.graph.labels = ['ProjectA', 'ProjectB', 'ProjectC', 'ProjectD', 'ProjectE'];
+	$scope.graph.series = ['Funds', 'Instances'];
+
+
+})
+
+.controller('managerSelectCtrl',function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk, PeopleService) { 
+
+	PeopleService.getPeopleList().then(function(prList)
+	{
+		$scope.managerList = prList;
+	});
+
+})
+.controller('PersonnelDisplayCtrl', function($scope, $timeout, $filter, PeopleService) { 
+  
+	PeopleService.getPeopleList().then(function(prList)
+	{
+			$scope.users= [
+			{id: 1, name: "Valentina", selected: true},
+			{id: 2, name: "Juan David", selected: false},
+			{id: 3, name: "Osman", selected: false},
+			{id: 4, name: "Silva", selected: false}
+	  		];			
+		
+  			$scope.getOptionsSelected = function(options, valueProperty, selectedProperty){
+   				 var optionsSelected = $filter('filter')(options, function(option) {return option[selectedProperty] == true; });
+  			 	 return optionsSelected.map(function(group){ return group[valueProperty]; }).join(", ");
+ 	 };
+	}); 
+})
+.directive('ionMultipleSelect', ['$ionicModal', '$ionicGesture', function ($ionicModal, $ionicGesture) {
+  return {
+    restrict: 'E',
+    scope: {
+      options : "="
+    },
+    controller: function ($scope, $element, $attrs) {
+      $scope.multipleSelect = {
+        title:            $attrs.title || "Select Options",
+        tempOptions:      [],
+        keyProperty:      $attrs.keyProperty || "id",
+        valueProperty:    $attrs.valueProperty || "employeeName",
+        selectedProperty: $attrs.selectedProperty || "selected",
+        templateUrl:      $attrs.templateUrl || 'templates/multipleSelect.html',
+        renderCheckbox:   $attrs.renderCheckbox ? $attrs.renderCheckbox == "true" : true,
+        animation:        $attrs.animation || 'slide-in-up'
+      };
+
+      $scope.OpenModalFromTemplate = function (templateUrl) {
+        $ionicModal.fromTemplateUrl(templateUrl, {
+          scope: $scope,
+          animation: $scope.multipleSelect.animation
+        }).then(function (modal) {
+          $scope.modal = modal;
+          $scope.modal.show();
+        });
+      };
+      
+      $ionicGesture.on('tap', function (e) {
+       $scope.multipleSelect.tempOptions = $scope.options.map(function(option){
+         var tempOption = { };
+         tempOption[$scope.multipleSelect.keyProperty] = option[$scope.multipleSelect.keyProperty];
+         tempOption[$scope.multipleSelect.valueProperty] = option[$scope.multipleSelect.valueProperty];
+         tempOption[$scope.multipleSelect.selectedProperty] = option[$scope.multipleSelect.selectedProperty];
+         
+         return tempOption;
+       });
+        $scope.OpenModalFromTemplate($scope.multipleSelect.templateUrl);
+      }, $element);
+      
+      $scope.saveOptions = function(){
+        for(var i = 0; i < $scope.multipleSelect.tempOptions.length; i++){
+          var tempOption = $scope.multipleSelect.tempOptions[i];
+          for(var j = 0; j < $scope.options.length; j++){
+            var option = $scope.options[j];
+            if(tempOption[$scope.multipleSelect.keyProperty] == option[$scope.multipleSelect.keyProperty]){
+              option[$scope.multipleSelect.selectedProperty] = tempOption[$scope.multipleSelect.selectedProperty];
+              break;
+            }
+          }
+        }
+        $scope.closeModal();
+      };
+      
+      $scope.closeModal = function () {
+        $scope.modal.remove();
+      };
+      $scope.$on('$destroy', function () {
+          if ($scope.modal){
+              $scope.modal.remove();
+          }
+      });
+    }
+  };
+}]);
 ;

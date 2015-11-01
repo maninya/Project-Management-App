@@ -1,10 +1,4 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
-var app = angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'ionMdInput', 'firebase'])
+var app = angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'ionMdInput', 'firebase','chart.js'])
 
 app.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -18,7 +12,7 @@ app.run(function($ionicPlatform) {
             StatusBar.styleDefault();
         }
     });
-})
+});
 
 app.factory("dbURL", [function()
 {
@@ -115,179 +109,600 @@ app.factory("LoginService", ['$location', '$timeout', '$rootScope', 'dbURL', fun
 	}
 }]);
 
-app.factory("LocationService",["dbURL", "UserDataService", function(dbURL, UserDataService)
+app.factory("LocationService",["dbURL", "UserDataService", "$q", function(dbURL, UserDataService, $q)
 {
 	var factory = {};
-	var orgid = UserDataService.getUserOrg();
-
+		
 	factory.getLocationList = function()
 	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
 		var locationList = [];
 		var locRef = new Firebase(dbURL + 'locations/' + orgid);
-		locRef.on("value", function(snapshot) {
+		locRef.once("value", function(snapshot) {
 			snapshot.forEach(function(childSnapshot) {
 				var locId = childSnapshot.key();
 				var locData = childSnapshot.val();
+				locData['id'] = locId;
 				locationList.push(locData);		
-				console.log("SELECTED -> " + locData.districtName + ":" + locData.stateName);
+				console.log("SELECTED -> " + locData.districtName + ":" + locData.stateName + ":" + locData.id);
 			});
+			deferObj.resolve(locationList);
 		});
-		return locationList;
+		return deferObj.promise;
 	}
 	
-	factory.getLocationId = function(state,district)
+	factory.remLoct = function(locationID)
 	{
-		var locRef = new Firebase(dbURL + 'locations/' + orgid);
-		var locId = "";
-		locRef.on("value", function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
-				locId = childSnapshot.key();
-				var locData = childSnapshot.val();
-				if(angular.equals(locData.districtName, district) && angular.equals(locData.stateName, state))
-				{
-					console.log("location id: " + locId + ", district name: " + locData.districtName + ", state name: " + locData.stateName);
-					return true;
-				}
-			});
-		});
-		return locId;
+		var def = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		console.log("remLoct() : " + locationID);
+		var loctRef = new Firebase(dbURL + "locations/" + orgid + "/" + locationID);
+		loctRef.remove();
+		def.resolve();		
+		return def.promise;
 	}
-	
+
+	factory.addLocation = function(locObj)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var locRef = new Firebase(dbURL + 'locations/' + orgid + "/" + locObj.locationId);
+		console.log("The path to location: "  + locRef.toString());
+		locRef.once("value", function(snapshot) {
+			if(!snapshot.exists())
+			{
+				locRef.set({districtName:locObj.district, stateName:locObj.state},function(error)
+				{
+					if(error)
+					{
+						console.log("The location could not be added");
+						deferObj.resolve(0);
+					}
+					else
+					{
+						console.log("The location added");
+						
+						var insRef = new Firebase(dbURL + "instances/" + orgid + "/" + locObj.locationId + "/" + locObj.instanceId);
+						insRef.set({address: locObj.address}, function(error)
+						{
+							if(error)
+							{
+								console.log("The location is added; but the instance data could not be added");
+								deferObj.resolve(1);
+							}
+							else
+							{
+								console.log("Instance data added");
+								deferObj.resolve(2);
+							}
+						});
+					}
+				});
+			}
+			else
+			{
+				console.log("The location is already present. Good to go");
+				var insRef = new Firebase(dbURL + "instances/" + orgid + "/" + locObj.locationId + "/" + locObj.instanceId);
+				insRef.once("value", function(insnapshot) {
+					if(insnapshot.exists())
+					{
+						var insdata = insnapshot.val();
+						console.log("The location and address already exist. Address found is : " + insdata.address);
+						deferObj.resolve(3);
+					}
+					else
+					{
+						insRef.set({address: locObj.address},
+						function(error)
+						{
+							if(error)
+							{
+								console.log("The instance data could not be added");
+								deferObj.resolve(1);
+							}
+							else
+							{
+								console.log("Instance data added");
+								deferObj.resolve(2);
+							}
+						});
+					}
+				});
+			}
+		});
+		return deferObj.promise;
+	}
+		
 	return factory;
 }]);
 
-app.factory("ProjectService",["dbURL", "UserDataService", "$rootScope", "LocationService", function(dbURL, UserDataService, $rootScope, LocationService)
+app.factory("GraphService",["dbURL", "UserDataService", "ProjectService", "$q", function(dbURL, UserDataService, ProjectService, $q)
+
+{
+    var factory = {};
+    factory.projListLocCount = function()
+    {
+
+        var deferObj = $q.defer();
+        ProjectService.getProjectList().then(function(data)
+        {
+            var orgid = UserDataService.getUserOrg();
+            console.log("projectCount: " + data.projectCount);
+            //$scope.projects = data.prList;
+            var i;
+            var returnObj = {};
+            var projLoc = [];
+            var projNames = [];
+            var locCount;
+            for (i = 0; i<data.projectCount; ++i) {
+                var pidUrl = new Firebase(dbURL + 'projectFinance/' + orgid + "/" + i + "/projectLocations");
+                console.log("prList: " + data.prList[i].projectName);
+                locCount = 0;
+                //var projloc = {count : 0, name : data.prList[i].projectName};
+                projNames.push(data.prList[i].projectName);
+                pidUrl.once("value", function(snapshot){
+                    snapshot.forEach(function(childSnapshot) {
+                        if(childSnapshot.exists())
+                        {
+                            locCount++;
+                            console.log("locCount in loop: " + locCount);
+
+                        }
+                    });
+                    projLoc.push($q.all(locCount));   
+                    console.log("projloc: " + projLoc);
+                    returnObj.locCount = projLoc;   
+                    returnObj.prNames = projNames;
+                    //deferObj.resolve(returnObj);
+                     
+                });
+
+            }
+
+        });
+        return deferObj.promise;
+    }
+    return factory;
+
+}]);
+
+app.factory("ProjectService", ["dbURL", "UserDataService", "$rootScope", "LocationService", "$q", "PeopleService", "ItemService", function(dbURL, UserDataService, $rootScope, LocationService, $q, PeopleService, ItemService)
 {
 	var factory = {};
-	
-	var orgid = UserDataService.getUserOrg();
-	
+		
 	factory.getProjectList = function()
 	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
 		var projectList = [];	
 		var projRef = new Firebase(dbURL + 'projects/' + orgid);
-		projRef.on("value", function(snapshot) {
+		projRef.once("value", function(snapshot) {
 			snapshot.forEach(function(childSnapshot) {
 				var projId = childSnapshot.key();
 				var projData = childSnapshot.val();
+				projData['id'] = projId;
 				projectList.push(projData);		
-				console.log("SELECTED -> " + projData.projectName + ":" + projData.projectManager + ":" + projData.projectDescription + ":" + projData.startDate + ":" + projData.endDate + ":" + projData.duration);
+				console.log("SELECTED -> " + projData.projectName + ":" + projData.projectManager + ":" + projData.projectDescription + ":" + projData.startDate + ":" + projData.endDate + ":" + projData.duration + ":" + projData.id);
 			});
+			deferObj.resolve(projectList);
 		});
-		return projectList;
+		return deferObj.promise;
+	}
+
+	factory.remProj = function(projectID)
+	{
+		var def = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		console.log("remProj() : " + projectID);
+		var projRef = new Firebase(dbURL + "projects/" + orgid + "/" + projectID);
+		projRef.remove();
+		def.resolve();		
+		return def.promise;
+	}
+
+	factory.addProject = function(projData)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		
+		var ref = new Firebase(dbURL + "projects/" + orgid + "/" + projData.id);
+		console.log("project ref : " + ref.toString());
+		ref.once("value", function(snapshot) {
+			if(snapshot.exists())
+			{
+				var projdata = snapshot.val();
+				console.log("The name of the project : " + projdata.projectName);
+				deferObj.resolve(0);
+			}
+			else
+			{
+					ref.set({projectName : projData.name, projectDescription : projData.desc, projectManager : projData.mngr, endDate : projData.end, startDate : projData.start, duration: projData.time},
+						function(error)
+						{
+							if(error)
+							{
+								console.log("The project data could not be added");
+								deferObj.resolve(1);
+							}
+							else
+							{
+								console.log("Project data added");
+								deferObj.resolve(2);
+							}
+						});
+			}
+		});
+		return deferObj.promise;
 	}
 	
-	factory.addProjectInstance = function(instanceData)
+	factory.addFunds = function(fund)
 	{
-				$rootScope.locId = LocationService.getLocationId(instanceData.state, instanceData.district);
-
-        $rootScope.$watch('locId', function()
-		{
-			var insRef = new Firebase(dbURL + 'instances/' + orgid + "/" + $rootScope.locId + "/" + instanceData.instanceId);
-			console.log("looking for : " + insRef.toString());
-		});
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var projref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + fund.prid);
+		var locref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + fund.prid + "/projectLocations/" + fund.lid);
+		var insref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + fund.prid + "/projectLocations/" + fund.lid + "/projectInstances/" + fund.iid);
 		
-		/*			insRef.on("value", function(insnapshot) {
-						if(insnapshot.exists())
+		insref.update({instanceFunds : fund.amt}, function(error)
+		{
+			if(error)
+			{
+				console.log("Could not add funds for instance");
+				deferObj.resolve(0);
+			}
+			else
+			{
+				console.log("Added funds for instance");
+				locref.once("value", function(snapshot)
+				{
+					var locFund = fund.amt;
+					if(snapshot.hasChild('locationFunds'))
+					{
+						var data = snapshot.val();
+						locFund += data.locationFunds;
+					}
+					locref.update({locationFunds : locFund}, function(error)
+					{
+						if(error)
 						{
-							var insdata = insnapshot.val();
-							console.log("The address found is : " + insdata.address);
-							$rootScope.$broadcast('instanceAddFail');
+							console.log("Could not add funds for location");
+							deferObj.resolve(1);
 						}
 						else
 						{
-							insRef.set({address: instanceData.address},
-							function(error)
+							console.log("Added funds for locations");
+							projref.once("value", function(childSnapshot)
 							{
-								if(error)
-								{
-									$rootScope.$broadcast('instanceAddFail');
-								}
-								else
-								{
-									$rootScope.$broadcast('instanceAddSuccess');
-								}
 								
+								var projFund = fund.amt;
+								if(childSnapshot.hasChild('projectFunds'))
+								{
+									var data = childSnapshot.val();
+									projFund += data.projectFunds;
+								}
+								projref.update({projectFunds : projFund}, function(error)
+								{
+									if(error)
+									{
+										console.log("Could not add funds for project");
+										deferObj.resolve(2);
+									}
+									else
+									{
+										console.log("added the funds for project");
+										deferObj.resolve(3);
+									}
+								});
 							});
 						}
-					});		*/
+					});
+				});			
+				
+			}
+		});
+		return deferObj.promise;
+	}
+	
+	factory.addExpenses = function(expense)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var projref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + expense.prid);
+		var locref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + expense.prid + "/projectLocations/" + expense.lid);
+		var insref = new Firebase(dbURL + "projectFinance/" + orgid + "/" + expense.prid + "/projectLocations/" + expense.lid + "/projectInstances/" + expense.iid);
+		
+		insref.update({instanceExpense : expense.amt}, function(error)
+		{
+			if(error)
+			{
+				console.log("Could not add expenses for instance");
+				deferObj.resolve(0);
+			}
+			else
+			{
+				console.log("Added expense for instance");
+				locref.once("value", function(snapshot)
+				{
+					var locExp = expense.amt;
+					if(snapshot.hasChild('locationExpense'))
+					{
+						var data = snapshot.val();
+						locExp += data.locationExpense;
+					}
+					locref.update({locationExpense : locExp}, function(error)
+					{
+						if(error)
+						{
+							console.log("Could not add expense for location");
+							deferObj.resolve(1);
+						}
+						else
+						{
+							console.log("Added expense for locations");
+							projref.once("value", function(childSnapshot)
+							{
+								
+								var projExp = expense.amt;
+								if(childSnapshot.hasChild('projectExpense'))
+								{
+									var data = childSnapshot.val();
+									projExp += data.projectExpense;
+								}
+								projref.update({projectExpense : projExp}, function(error)
+								{
+									if(error)
+									{
+										console.log("Could not add expense for project");
+										deferObj.resolve(2);
+									}
+									else
+									{
+										console.log("added the expense for project");
+										deferObj.resolve(3);
+									}
+								});
+							});
+						}
+					});
+				});			
+				
+			}
+		});
+		return deferObj.promise;
+	}
+	
+	factory.addPeople = function(pObj)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+
+		for(var i = 0; i <  pObj.perlist.length; i++)
+		{
+			var projref = new Firebase(dbURL + "projectPersonnel/" + orgid + "/" + pObj.pid + "/" + pObj.perlist[i]);
+			var locref = new Firebase(dbURL + "projectPersonnel/" + orgid + "/" + pObj.pid + "/projectLocations/" + pObj.lid + "/" + pObj.perlist[i]);
+			var insref = new Firebase(dbURL + "projectPersonnel/" + orgid + "/" + pObj.pid + "/projectLocations/" + pObj.lid + "/projectInstances/" + pObj.iid + "/" + pObj.perlist[i]);
+			insref.update({someDummyValue : 0});
+			locref.update({someDummyValue : 0});
+			projref.update({someDummyValue : 0});
+		}
+
+		deferObj.resolve(1);
+		return deferObj.promise;
+	}
+	
+	factory.addItems = function(iObj)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var mainqty;
+		for(var i = 0; i < iObj.itlist.length; i++)
+		{
+			var itemRef = new Firebase(dbURL + "inventory/" + orgid + "/" + iObj.itlist[i].itid);
+			var projref = new Firebase(dbURL + "projectInventory/" + orgid + "/" + iObj.pid + "/projectItems/" + iObj.itlist[i].itid);
+			var locref = new Firebase(dbURL + "projectInventory/" + orgid + "/" + iObj.pid + "/projectLocations/" + iObj.lid + "/projectItems/" + iObj.itlist[i].itid);
+			var insref = new Firebase(dbURL + "projectInventory/" + orgid + "/" + iObj.pid + "/projectLocations/" + iObj.lid + "/projectInstances/" + iObj.iid + "/projectItems/" + iObj.itlist[i].itid);
+			insref.update({projectAllotedCount : iObj.itlist[i].itaqty, projectRequiredCount: iObj.itlist[i].itrqty });
+			locref.update({projectAllotedCount : iObj.itlist[i].itaqty, projectRequiredCount: iObj.itlist[i].itrqty });
+			projref.update({projectAllotedCount : iObj.itlist[i].itaqty, projectRequiredCount: iObj.itlist[i].itrqty });		
+/*
+			ItemService.modifyQuantity(itemRef, iObj.itlist[i].itaqty).then(function(data)
+			{
+				console.log("modified the quantity");
+			});*/
+		/*	addNotification(iObj).then(function()
+			{
+				
+			});*/
+		}
+		deferObj.resolve(1);
+		return deferObj.promise;		
 	}
 	return factory;
 }]);
 
-app.factory("InstanceService",["dbURL", "UserDataService", function(dbURL, UserDataService)
+app.factory("InstanceService",["dbURL", "UserDataService", "$q", function(dbURL, UserDataService, $q)
 {
 	var factory = {};
 
-	factory.getInstanceList = function()
+	factory.getInstanceList = function(locId)
 	{
+		var deferObj = $q.defer();
 		var instanceList = [];
 		var orgid = UserDataService.getUserOrg();
-		var insRef = new Firebase(dbURL + 'instances/' + orgid);
-		insRef.on("value", function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
-				var locid = childSnapshot.key().toString();
-				console.log("The locid is: " + locid);
-				var locRef = new Firebase(dbURL + 'instances/' + orgid + "/" + locid);
-				locRef.on("value", function(inschildSnapshot){
-					inschildSnapshot.forEach(function(instanceSnapshot) {
-						var insId = instanceSnapshot.key();
-						var insData = instanceSnapshot.val();
-						instanceList.push(insData);		
-						console.log("SELECTED -> " + insData.address);
-					});
-				});
+		var insRef = new Firebase(dbURL + 'instances/' + orgid + "/" + locId);
+		insRef.once("value", function(snapshot) 
+		{
+			console.log("Selecting instances for location: " + locId);
+			snapshot.forEach(function(childSnapshot) 
+			{
+				var insId = childSnapshot.key();
+				var insData = childSnapshot.val();
+				insData['id'] = insId;
+				instanceList.push(insData);		
+				console.log("SELECTED -> " + insData.address + ":" + insData.id);
 			});
+			deferObj.resolve(instanceList);
 		});
-		return instanceList;
+		return deferObj.promise;
 	}
 	return factory;
 }]);
 
-app.factory("PeopleService",["dbURL", "UserDataService", function(dbURL, UserDataService)
+app.factory("PeopleService",["dbURL", "UserDataService", "$q", function(dbURL, UserDataService, $q)
 {
 	var factory = {};
 
 	factory.getPeopleList = function()
 	{
+		var deferObj = $q.defer();
 		var peopleList = [];
 		var orgid = UserDataService.getUserOrg();
 		var pplRef = new Firebase(dbURL + 'personnel/' + orgid);
-		pplRef.on("value", function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
+		pplRef.on("value", function(snapshot)
+		{
+			snapshot.forEach(function(childSnapshot)
+			{
 				var pplid = childSnapshot.key();
 				var pplData = childSnapshot.val();
+				pplData['id'] = pplid;
 				peopleList.push(pplData);		
-				console.log("SELECTED -> " + pplData.employeeName + ":" + pplData.employeeRole + ":" + pplData.employeeMail + ":" + pplData.gender + ":" + pplData.number);
+				console.log("SELECTED -> " + pplData.employeeName + ":" + pplData.employeeRole + ":" + pplData.employeeMail + ":" + pplData.gender + ":" + pplData.number + ":" + pplData.id);
 			});
+			deferObj.resolve(peopleList);
 		});
-		return peopleList;
+		return deferObj.promise;
 	}
+	
+	factory.addPerson = function(peopleObj)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var pplRef = new Firebase(dbURL + 'personnel/' + orgid + "/" + peopleObj.pid);
+		pplRef.once("value", function(snapshot)
+		{
+			if(!snapshot.exists())
+			{
+				pplRef.set({employeeName : peopleObj.name, employeeRole:peopleObj.role, employeeMail:peopleObj.mail, gender:peopleObj.gender, number:peopleObj.num}, function(error)
+				{
+					if(error)
+					{
+						console.log("Adding person failed.");
+						deferObj.resolve(0);
+					}
+					else
+					{
+						console.log("Adding person done..");
+						deferObj.resolve(1);
+					}
+				});
+			}
+			else
+			{
+				console.log("Person already exists");
+				deferObj.resolve(2);
+			}
+		});
+		return deferObj.promise;
+	}
+
+	factory.remPers = function(personID)
+	{
+		var def = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		console.log("remPers() : " + personID);
+		var persRef = new Firebase(dbURL + "personnel/" + orgid + "/" + personID);
+		persRef.remove();
+		def.resolve();		
+		return def.promise;
+	}
+	
 	return factory;
 }]);
 
-app.factory("ItemService",["dbURL", "UserDataService", function(dbURL, UserDataService)
+app.factory("ItemService",["dbURL", "UserDataService", "$q", function(dbURL, UserDataService, $q)
 {
 	var factory = {};
 
 	factory.getItemList = function()
 	{
+		var deferObj = $q.defer();
 		var itemList = [];
 		var orgid = UserDataService.getUserOrg();
 		var itemRef = new Firebase(dbURL + 'inventory/' + orgid);
-		itemRef.on("value", function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
+		itemRef.on("value", function(snapshot)
+		{
+			snapshot.forEach(function(childSnapshot)
+			{
 				var itemid = childSnapshot.key();
 				var itemData = childSnapshot.val();
+				itemData['id'] = itemid;
 				itemList.push(itemData);		
-				console.log("SELECTED -> " + itemData.itemName + ":" + itemData.itemQuantity);
+				console.log("SELECTED -> " + itemData.itemName + ":" + itemData.itemQuantity + ":" + itemData.id);
 			});
+			deferObj.resolve(itemList);
 		});
-		return itemList;
+		return deferObj.promise;
 	}
+	
+	factory.remItem = function(itemID)
+	{
+		var def = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		console.log("remItem() : " + itemID);
+		var itemRef = new Firebase(dbURL + "inventory/" + orgid + "/" + itemID);
+		itemRef.remove();
+		def.resolve();		
+		return def.promise;
+	}
+
+	factory.addItem = function(item)
+	{
+		var deferObj = $q.defer();
+		var orgid = UserDataService.getUserOrg();
+		var itRef = new Firebase(dbURL + 'inventory/' + orgid + "/" + item.itid);
+		itRef.once("value", function(snapshot)
+		{
+			if(!snapshot.exists())
+			{
+				itRef.set({itemName : item.itname, itemQuantity:item.itqty}, function(error)
+				{
+					if(error)
+					{
+						console.log("Adding item failed.");
+						deferObj.resolve(0);
+					}
+					else
+					{
+						console.log("Adding item done..");
+						deferObj.resolve(1);
+					}
+				});
+			}
+			else
+			{
+				console.log("Item already exists");
+				deferObj.resolve(2);
+			}
+		});
+		return deferObj.promise;
+	}
+	/*
+	factory.modifyQuantity = function(itemRef, qty)
+	{
+		var deferObj = $q.defer();
+		itemRef.once("value", function(snapshot)
+		{
+			data = snapshot.val().itemQuantity;
+			updateval = data - qty;
+			itemRef.update({itemQuantity:qty});
+			deferObj.resolve(data);
+		});
+		return deferObj.promise;
+	}
+	*/
 	return factory;
 }]);
-
 
 app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
@@ -397,6 +812,18 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
     })
 
+    $stateProvider.state('app.addProject', {
+        url: '/addProject',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/addProject.html',
+                controller: 'AddProjectCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
     $stateProvider.state('app.funds', {
         url: '/finance',
         views: {
@@ -416,6 +843,32 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             'menuContent': {
                 templateUrl: 'templates/personnel.html',
                 controller: 'PersonnelCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
+
+	$stateProvider.state('app.graphs', {
+        url: '/graphs',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/graphs.html',
+                controller: 'GraphsCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
+
+    $stateProvider.state('app.locgraphs', {
+        url: '/locgraphs',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/locgraphs.html',
+                controller: 'LocGraphsCtrl'
             },
             'fabContent': {
                 template: ''
@@ -448,7 +901,42 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
             }
         }
     })
-
+	$stateProvider.state('app.addLocation', {
+        url: '/addLocation',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/addLocation.html',
+                controller: 'AddLocationCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
+	$stateProvider.state('app.addPersonnel', {
+        url: '/addPersonnel',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/addPersonnel.html',
+                controller: 'AddPersonnelCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
+	$stateProvider.state('app.addInventory', {
+        url: '/addInventory',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/addInventory.html',
+                controller: 'AddInventoryCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
 	$stateProvider.state('app.analytics', {
         url: '/analytics',
         views: {

@@ -3,20 +3,13 @@
 		<ion-content scroll="false">
 			<ion-list ng-controller="ProjectsCtrl"
 					  can-swipe="listCanSwipe">
-				<ion-item ng-repeat="user in users">
-    				Hello, {{user.userName}} !
-    				<p>{{user.userMail}}</p>
-    				<ion-option-button class="button-positive">
-				    	Share
-				    </ion-option-button>
-				    <ion-option-button class="button-info">
-					    Edit
-				    </ion-option-button>
+				<ion-item ng-repeat="project in projects">
+    				{{project.projectName}}
  		 		</ion-item>
 			</ion-list>
 
 			<div class="tabs tabs-balanced tabs-icon-top" >
-	            <a class="tab-item">
+	            <a ui-sref="app.addProject" class="tab-item">
 	                <i class="icon ion-plus-circled"></i> Add Project
 	            </a>
            	</div>
