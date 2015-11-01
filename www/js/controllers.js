@@ -122,8 +122,7 @@ angular.module('starter.controllers', [])
 		} else {
 		    $scope.$on('loginFail', function()
 			{
-				$scope.loginData.ErrorMessage = "Wrong Credentials";
-				$scope.$apply();
+				alert("Email or password is invalid");
 				console.log("error message in controller: " + $scope.loginData.ErrorMessage);
 			})
 			$scope.$on('loginSuccess', function()
