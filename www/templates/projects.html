@@ -5,10 +5,12 @@
 					  can-swipe="listCanSwipe">
 				<ion-item ng-repeat="project in projects">
     				{{project.projectName}}
+					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(project)"> </ion-option-button>
+    				<ion-option-button class="button button-assertive icon ion-ios-trash" ng-click="removeProject(project)"> </ion-option-button>
  		 		</ion-item>
 			</ion-list>
 
-			<div class="tabs tabs-balanced tabs-icon-top" >
+			<div class="tabs tabs-balanced-900 tabs-icon-top" >
 	            <a ui-sref="app.addProject" class="tab-item">
 	                <i class="icon ion-plus-circled"></i> Add Project
 	            </a>

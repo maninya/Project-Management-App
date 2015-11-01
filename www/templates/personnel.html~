@@ -4,9 +4,11 @@
 			<ion-list>
 				<ion-item ng-repeat="person in people">
     				{{person.employeeName}}
+					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(person)"> </ion-option-button>
+    				<ion-option-button class="button button-assertive icon ion-ios-trash" ng-click="removePerson(person)"> </ion-option-button>
  		 		</ion-item>
 			</ion-list>	
-			<div class="tabs tabs-balanced tabs-icon-top" >
+			<div class="tabs tabs-balanced-900 tabs-icon-top" >
 	           <!-- <a class="tab-item">
 	                <i class="icon ion-edit"></i> Edit
 	            </a> -->
