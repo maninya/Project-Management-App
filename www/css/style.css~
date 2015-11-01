@@ -11,19 +11,47 @@ h2 {
   color: #2b2b2b;
   text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
 }
-
-h2 {
-  font: 40px 'Leckerli One', Helvetica, sans-serif;
-  color: #000;
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
-}
 */
 
 h2 {
-  font: 40px 'Berkshire Swash', Helvetica, sans-serif;
-  color: #fff;
+  font: 42px Helvetica, sans-serif;
+  color: #ff5722;
   text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
 }
+
+h3 {
+  font: 35px 'Leckerli One', Helvetica, sans-serif;
+  color: #000;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
+}
+
+h4 {
+  font: 15px Helvetica, sans-serif;
+  color: #000;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
+}
+
+.spinner svg {
+  width: 56px;
+  height: 56px;
+  stroke: #ff8a65;
+  fill: #444;
+}
+
+.card {
+    background:#212121;
+    border:1px dotted #424242;
+    margin:10px;
+    overflow:hidden;
+}
+
+.card1 {
+    background:#fff;
+    border:1px dotted #424242;
+    margin:10px;
+    overflow:hidden;
+}
+
 
 /* Utilities
 ==================================*/
@@ -124,37 +152,5 @@ p {
     position: fixed;
     bottom: 0;
 }
-.error-container {
-  margin: 5px 0;
-}
 
-.error-container:last-child {
-    margin: 5px 0 0;
-}
 
-.error {
-  padding: 10px 16px;
-  font-family: "Arial Black", Gadget, sans-serif;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #555;
-  vertical-align: middle;
-}
-
-.error i {
-  font-size: 24px;
-  color: #B83E2C;  
-  vertical-align: middle;
-}
-
-.last-error-container > .error {
-  padding: 10px 16px 0;
-}
-
-.has-errors {
-  border-bottom: 3px solid #B83E2C;
-}
-
-.no-errors {
-  border-bottom: 3px solid green;
-}

@@ -1,8 +1,7 @@
 <ion-view view-title="Projects">
 	<ion-pane>
 		<ion-content scroll="false">
-			<ion-list ng-controller="ProjectsCtrl"
-					  can-swipe="listCanSwipe">
+			<ion-list>
 				<ion-item ng-repeat="project in projects">
     				{{project.projectName}}
 					<ion-option-button class="button button-calm icon ion-edit" ng-click="edit(project)"> </ion-option-button>

@@ -14,13 +14,13 @@ h2 {
 */
 
 h2 {
-  font: 42px 'Berkshire Swash', Helvetica, sans-serif;
+  font: 42px 'Berkshire Swash',Helvetica, sans-serif;
   color: #ff5722;
   text-shadow: 1px 1px 0px #ededed, 4px 4px 0px rgba(0,0,0,0.15);
 }
 
 h3 {
-  font: 35px 'Leckerli One', Helvetica, sans-serif;
+  font: 35px Helvetica, sans-serif;
   color: #000;
   text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); 
 }
